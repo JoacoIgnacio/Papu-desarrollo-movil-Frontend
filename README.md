@@ -32,6 +32,6 @@ Esto iniciara la aplicación utilizando Expo Go, una vez ejecutada se pueden usa
 ### Ejecución Android (Sin emulador)
 
 - Colocar el modo desarrollador en el celular a utilizar y activar el modo de depuracion USB en las opciones de desarrollador (El nombre puede variar del modelo del dispositivo).
-- Conectar el dispositivo al PC y colocar en modo de depuración USB.
+- Conectar el dispositivo al PC y colocar en modo de tranferencias de archivos
 - Ejecutando la aplicación, seleccionar "a" para abrir el android, instalara lo necesario en el dispositivo y procedera a abrir la pagina web.
 
