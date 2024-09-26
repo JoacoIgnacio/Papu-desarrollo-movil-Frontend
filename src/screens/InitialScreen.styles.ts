@@ -234,4 +234,15 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 10,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  loadingText: {
+    marginTop: 20,
+    fontSize: 18,
+    color: '#333',
+  },
 });

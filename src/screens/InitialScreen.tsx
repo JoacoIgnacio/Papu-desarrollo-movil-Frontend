@@ -1,18 +1,39 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Button, Text, useTheme } from '@rneui/themed';
-import { View, ScrollView, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, ScrollView, StyleSheet, TouchableOpacity, Image, Dimensions, ActivityIndicator } from 'react-native';
 import { RootStackParamList } from '../navigation/rootStackNavigation';
 import { styles } from './InitialScreen.styles'; 
 
 const { width } = Dimensions.get('window');
 
 const InitialScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>) => {
+  const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
+
+  //Parametros para la pantalla de carga
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  //Accion de la carga como tal
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+        <Text style={styles.loadingText}>Cargando...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
-          {/* Barra de navegación */}
-          <View style={styles.navBar}>
+      {/* Barra de navegación */}
+      <View style={styles.navBar}>
         {/* Logo a la izquierda */}
         <Image
           source={{ uri: 'https://via.placeholder.com/100x40' }} 
@@ -33,6 +54,7 @@ const InitialScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList
           <Text style={styles.heroButtonText}>LEARN MORE</Text>
         </TouchableOpacity>
       </View>
+
       {/* Cita central */}
       <View style={styles.quoteSection}>
         <Text style={styles.quoteText}>
@@ -127,6 +149,5 @@ const InitialScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList
     </ScrollView>
   );
 };
-
 
 export default InitialScreen;
