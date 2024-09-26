@@ -36,7 +36,7 @@ const InitialScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList
       <View style={styles.navBar}>
         {/* Logo a la izquierda */}
         <Image
-          source={{ uri: 'https://via.placeholder.com/100x40' }} 
+          source={{ uri: './assets/images/icon1.png' }} 
           style={styles.logo}  
         />
 
@@ -70,7 +70,7 @@ const InitialScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList
         <View style={styles.eventsRow}>
           <View style={styles.card}>
             <Image
-              source={{ uri: 'https://via.placeholder.com/600x400' }} // Imagen de ejemplo
+              source={{ uri: './assets/images/beach.jpg'}} // Imagen de ejemplo
               style={styles.image}
             />
             <Text style={styles.title}>Everest Camp Trek</Text>
@@ -83,7 +83,7 @@ const InitialScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList
           </View>
           <View style={styles.card}>
             <Image
-              source={{ uri: 'https://via.placeholder.com/600x400' }} // Imagen de ejemplo
+              source={{ uri: './assets/images/beach.jpg' }} 
               style={styles.image}
             />
             <Text style={styles.title}>Walking Holidays</Text>
@@ -100,7 +100,7 @@ const InitialScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList
       {/* Sección "Explore The World" */}
       <View style={styles.exploreSection}>
         <Image
-          source={{ uri: 'https://via.placeholder.com/1920x800' }} // Imagen de fondo simulada
+          source={{ uri: './assets/images/fog.jpg' }} 
           style={styles.exploreBackground}
         />
         <View style={styles.exploreContent}>
@@ -129,19 +129,19 @@ const InitialScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList
         </View>
         <View style={styles.toursImages}>
           <Image
-            source={{ uri: 'https://via.placeholder.com/300x200' }}
+            source={{ uri: './assets/images/forest.jpg' }}
             style={styles.toursImage}
           />
           <Image
-            source={{ uri: 'https://via.placeholder.com/300x200' }} 
+            source={{ uri: './assets/images/forest.jpg' }} 
             style={styles.toursImage}
           />
           <Image
-            source={{ uri: 'https://via.placeholder.com/300x200' }} 
+            source={{ uri: './assets/images/forest.jpg' }} 
             style={styles.toursImage}
           />
           <Image
-            source={{ uri: 'https://via.placeholder.com/300x200' }} 
+            source={{ uri: './assets/images/forest.jpg' }} 
             style={styles.toursImage}
           />
         </View>
