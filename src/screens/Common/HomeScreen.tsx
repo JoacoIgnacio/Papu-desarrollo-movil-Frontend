@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import { styles } from './HomeScreen.styles';
 
+
 const HomeScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>) => {
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
@@ -31,7 +32,7 @@ const HomeScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>) 
   // El contenido principal cuando la carga termina
   return (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Bienvenido, Usuario</Text>
+      <Text style={styles.welcomeText}>Bienvenido, [Usuario]</Text>
       <Button
         title="Cerrar Sesión"
         onPress={() => navigation.navigate('Login')}
