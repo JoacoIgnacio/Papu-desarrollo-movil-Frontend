@@ -1,47 +1,58 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Button, Text, useTheme } from '@rneui/themed';
-import { View, Animated, ActivityIndicator } from 'react-native'; 
-import { useEffect, useState } from 'react';
-import { RootStackParamList } from '../../navigation/rootStackNavigation';
-import { styles } from './HomeScreen.styles';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import LoginScreen from '../Auth/LoginScreen';
+import HomeScreen from '../Common/HomeScreen';
+import InitialScreen from '../InitialScreen';
+import QuestionnaireSelectionScreen from '../Common/QuestionnaireSelectionScreen'; 
+import EquipmentChecklistScreen from '../Checklists/EquipmentChecklistScreen';  
+import DriverChecklistScreen from '../Checklists/DriverChecklistScreen';  
+import InspectionChecklistScreen from '../Checklists/InspectionChecklistScreen';  
 
-
-type HomeScreenRouteParams = {
-  username: string;
+export type RootStackParamList = {
+  Initial: Record<string, string> | undefined;
+  Login: Record<string, string> | undefined;
+  Home: Record<string, string> | undefined;
+  QuestionnaireSelection: Record<string, string> | undefined;
+  EquipmentChecklist: Record<string, string> | undefined;
+  DriverChecklist: Record<string, string> | undefined;
+  InspectionChecklist: Record<string, string> | undefined;
 };
 
-export const HomeScreen = ({ route, navigation }: NativeStackScreenProps<RootStackParamList, 'Home'>) => {
-  const { username } = route.params as HomeScreenRouteParams; // Recuperar el nombre de usuario desde los parámetros
-  const [loading, setLoading] = useState(true);
-  const { theme } = useTheme();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timeout);
-  }, []);
-
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-        <Text style={styles.loadingText}>Construyendo Menú...</Text>
-      </View>
-    );
-  }
-
-  // Mostrar el nombre del usuario en el texto de bienvenida
+const RootStackNavigation = () => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.welcomeText}>Bienvenido {username}</Text>
-      <Button
-        title="Cerrar Sesión"
-        onPress={() => navigation.navigate('Login')}
-        buttonStyle={styles.button}
-        titleStyle={styles.buttonText}
-      />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Initial">
+        <Stack.Group
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="Initial" component={InitialScreen} />
+        </Stack.Group>
+        <Stack.Group
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="Login" component={LoginScreen} />
+        </Stack.Group>
+        <Stack.Group
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="QuestionnaireSelection" component={QuestionnaireSelectionScreen} />
+          <Stack.Screen name="EquipmentChecklist" component={EquipmentChecklistScreen} />
+          <Stack.Screen name="DriverChecklist" component={DriverChecklistScreen} />
+            <Stack.Screen name="InspectionChecklist" component={InspectionChecklistScreen} />
+          
+        </Stack.Group>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
+
+export default RootStackNavigation;
