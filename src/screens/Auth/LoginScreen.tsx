@@ -1,9 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Button, Input, Text, useTheme } from '@rneui/themed';
-import { View } from 'react-native';
+import { View, ActivityIndicator } from 'react-native'; // Importa ActivityIndicator
 import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import { styles } from './LoginScreen.styles';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { saveTokens } from '../../services/authStorage';
 
@@ -11,10 +11,23 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>)
   const { theme } = useTheme();
   const [username, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); // Estado para el mensaje de error
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+  useEffect(() => {
+    if (isButtonDisabled) {
+      const timer = setTimeout(() => {
+        setIsButtonDisabled(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isButtonDisabled]);
 
   const handleLogin = async () => {
-    setErrorMessage(''); // Reinicia el mensaje de error al intentar iniciar sesión
+    if (isButtonDisabled) return;
+    setIsButtonDisabled(true);
+    setErrorMessage('');
+
     try {
       console.log('Email:', username);
       console.log('Password:', password);
@@ -26,8 +39,7 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>)
       if (response.data && response.data.accessToken) {
         const { accessToken, refreshToken } = response.data;
         await saveTokens(accessToken, refreshToken);
-        // Aquí se pasa directamente el nombre de usuario desde el estado
-        navigation.navigate('Home', { username }); // Pasar el nombre de usuario desde el estado
+        navigation.navigate('Home', { username });
       } else {
         setErrorMessage('Usuario o contraseña incorrectos.');
       }
@@ -62,13 +74,23 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>)
         <Text style={{ color: 'red', marginBottom: 10 }}>{errorMessage}</Text>
       ) : null}
 
-      <Button title="Ingresar" onPress={handleLogin} buttonStyle={styles.button} />
+      <Button
+        onPress={handleLogin}
+        disabled={isButtonDisabled}
+        buttonStyle={styles.button}
+      >
+        {/* Muestra ActivityIndicator si el botón está deshabilitado */}
+        {isButtonDisabled ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          'Ingresar'
+        )}
+      </Button>
 
-      {/* Botón para regresar a la pantalla inicial */}
-      <Button 
-        title="Regresar a la Pantalla Inicial" 
-        onPress={() => navigation.navigate('Initial')} // Cambia 'Initial' por el nombre de tu pantalla inicial
-        buttonStyle={{ ...styles.button, backgroundColor: theme.colors.secondary, marginTop: 10 }} // Estilos del botón
+      <Button
+        title="Regresar a la Pantalla Inicial"
+        onPress={() => navigation.navigate('Initial')}
+        buttonStyle={{ ...styles.button, backgroundColor: theme.colors.secondary, marginTop: 10 }}
       />
     </View>
   );
