@@ -5,7 +5,7 @@ import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import { styles } from './LoginScreen.styles';
 import { useState } from 'react';
 import axios from 'axios';
-import { saveTokens } from '../../services/authStorage';
+import { saveToken } from '../../services/authStorage';
 
 const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>) => {
   const { theme } = useTheme();
@@ -19,20 +19,23 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>)
       console.log('Email:', username);
       console.log('Password:', password);
       
-      const response = await axios.post('http://localhost:3000/auth/login', { username, password });
+
+      const response = await axios.post('http://192.168.1.92:3000/auth/login', { username, password });
+      
       console.log(response.data);
 
       // Verifica si la respuesta tiene el token de acceso
       if (response.data && response.data.accessToken) {
         const { accessToken, refreshToken } = response.data;
-        await saveTokens(accessToken, refreshToken);
+        await saveToken('accessToken', accessToken);
+        await saveToken('refreshToken', refreshToken);
         // Aquí se pasa directamente el nombre de usuario desde el estado
-        navigation.navigate('Home', { username }); // Pasar el nombre de usuario desde el estado
+        navigation.navigate('Home', { response: response.data }); // Pasar el nombre de usuario desde el estado
       } else {
         setErrorMessage('Usuario o contraseña incorrectos.');
       }
     } catch (error) {
-      setErrorMessage('Usuario o contraseña incorrectos o error en la conexión.');
+      setErrorMessage('Usuario o contraseña incorrectos.');
     }
   };
 

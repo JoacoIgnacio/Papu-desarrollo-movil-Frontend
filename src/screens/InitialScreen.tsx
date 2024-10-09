@@ -1,9 +1,12 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Button, Text, useTheme } from '@rneui/themed';
 import { useEffect, useState } from 'react';
-import { View, ScrollView, StyleSheet, TouchableOpacity, Image, Dimensions, ActivityIndicator } from 'react-native';
+import { View, ScrollView, StyleSheet, TouchableOpacity, Image, Dimensions, ActivityIndicator,Alert, PanResponder  } from 'react-native';
 import { RootStackParamList } from '../navigation/rootStackNavigation';
 import { styles } from './InitialScreen.styles'; 
+import { getToken, saveToken,deleteToken } from '../services/authStorage';  // Importa el servicio de almacenamiento
+import axios from 'axios';  // Asegúrate de que axios está instalado
+
 
 const { width } = Dimensions.get('window');
 
@@ -13,12 +16,53 @@ const InitialScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList
 
   //Parametros para la pantalla de carga
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    const checkToken = async () => {
+      const accessToken = await getToken('accessToken'); // Obtener el accessToken almacenado
+      const refreshToken = await getToken('refreshToken'); // Obtener el refreshToken almacenado
+    
+      if (accessToken) {
+        try {
+          // Realiza una petición al backend para verificar la validez del token
+          const response = await axios.post('http://192.168.1.92:3000/auth/check-token', {}, {
+            headers: { Authorization: `Bearer ${accessToken}` }
+          });
+          
 
-    return () => clearTimeout(timeout);
-  }, []);
+          if (response.data) {
+            navigation.navigate('Home', { response: response.data });  // Si el token es válido, navega a la pantalla principal
+          }
+        } catch (error) {
+          if (refreshToken) {
+            try {
+
+              // Intenta renovar el accessToken usando el refreshToken
+              const refreshResponse = await axios.post('http://192.168.1.92:3000/auth/refresh-token', {}, {
+                headers: { Authorization: `Bearer ${refreshToken}` }
+              });
+
+              // Guarda los nuevos tokens
+              await saveToken('accessToken', refreshResponse.data.accessToken);
+              await saveToken('refreshToken', refreshResponse.data.refreshToken);
+
+              // Navega a la pantalla principal
+              navigation.navigate('Home', { response: refreshResponse.data });
+            } catch (refreshError) {
+              console.error('Error al renovar el token', refreshError);
+              navigation.navigate('Login');  // Si la renovación falla, redirige al Login
+            }
+          } else {
+            navigation.navigate('Login');  // Si no hay refreshToken, redirige al Login
+          }
+        }
+      } else {
+        navigation.navigate('Login');  // Si no hay token, redirige al Login
+      }
+
+      setLoading(false);  // Finaliza el estado de carga
+    };
+    checkToken();
+  }, [navigation]);
+  
 
   //Accion de la carga como tal
   if (loading) {

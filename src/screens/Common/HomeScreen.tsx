@@ -7,15 +7,16 @@ import { styles } from './HomeScreen.styles';
 
 
 type HomeScreenRouteParams = {
-  username: string;
+  response: any;
 };
 
 export const HomeScreen = ({ route, navigation }: NativeStackScreenProps<RootStackParamList, 'Home'>) => {
-  const { username } = route.params as HomeScreenRouteParams; // Recuperar el nombre de usuario desde los parámetros
+  const { response } = route.params as HomeScreenRouteParams; // Recuperar el nombre de usuario desde los parámetros
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
 
   useEffect(() => {
+    console.log(response);
     const timeout = setTimeout(() => {
       setLoading(false);
     }, 2000);
@@ -35,7 +36,7 @@ export const HomeScreen = ({ route, navigation }: NativeStackScreenProps<RootSta
   // Mostrar el nombre del usuario en el texto de bienvenida
   return (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Bienvenido {username}</Text>
+      <Text style={styles.welcomeText}>Bienvenido {response.decoded?.username}</Text>
       <Button
         title="Cerrar Sesión"
         onPress={() => navigation.navigate('Login')}
