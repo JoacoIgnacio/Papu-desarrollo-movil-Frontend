@@ -33,7 +33,7 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>)
       console.log('Password:', password);
       
 
-      const response = await axios.post('http://192.168.1.92:3000/auth/login', { username, password });
+      const response = await axios.post('http://192.168.0.8:3000/auth/login', { username, password });
       
       console.log(response.data);
 

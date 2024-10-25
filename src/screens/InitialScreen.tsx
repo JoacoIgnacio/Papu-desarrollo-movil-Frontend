@@ -23,7 +23,7 @@ const InitialScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList
       if (accessToken) {
         try {
           // Realiza una petición al backend para verificar la validez del token
-          const response = await axios.post('http://192.168.1.92:3000/auth/check-token', {}, {
+          const response = await axios.post('http://192.168.0.8:3000/auth/check-token', {}, {
             headers: { Authorization: `Bearer ${accessToken}` }
           });
           
@@ -36,7 +36,7 @@ const InitialScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList
             try {
 
               // Intenta renovar el accessToken usando el refreshToken
-              const refreshResponse = await axios.post('http://192.168.1.92:3000/auth/refresh-token', {}, {
+              const refreshResponse = await axios.post('http://192.168.0.8:3000/auth/refresh-token', {}, {
                 headers: { Authorization: `Bearer ${refreshToken}` }
               });
 
