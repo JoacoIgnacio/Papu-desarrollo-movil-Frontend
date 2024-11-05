@@ -11,3 +11,11 @@ export async function getToken(key: string) {
 export async function deleteToken(key: string) {
   await SecureStore.deleteItemAsync(key);
 }
+
+export async function getUserId(key: string) {
+  return await SecureStore.getItemAsync(key);
+}	
+
+export async function saveUserId(key: string, value: string) {
+  await SecureStore.setItemAsync(key, value);
+}

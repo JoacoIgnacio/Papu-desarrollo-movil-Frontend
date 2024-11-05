@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { View, ScrollView, StyleSheet, TouchableOpacity, Image, Dimensions, ActivityIndicator,Alert, PanResponder  } from 'react-native';
 import { RootStackParamList } from '../navigation/rootStackNavigation';
 import { styles } from './InitialScreen.styles'; 
-import { getToken, saveToken,deleteToken } from '../services/authStorage';  // Importa el servicio de almacenamiento
+import { getToken, saveToken} from '../services/authStorage';  // Importa el servicio de almacenamiento
 import axios from 'axios';  // Asegúrate de que axios está instalado
-
+import React from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -23,20 +23,20 @@ const InitialScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList
       if (accessToken) {
         try {
           // Realiza una petición al backend para verificar la validez del token
-          const response = await axios.post('http://192.168.0.8:3000/auth/check-token', {}, {
+          const response = await axios.post('http://192.168.1.90:3000/auth/check-token', {}, {
             headers: { Authorization: `Bearer ${accessToken}` }
           });
           
 
           if (response.data) {
-            navigation.navigate('Home', { response: response.data });  // Si el token es válido, navega a la pantalla principal
+            navigation.navigate('Home');  // Si el token es válido, navega a la pantalla principal
           }
         } catch (error) {
           if (refreshToken) {
             try {
 
               // Intenta renovar el accessToken usando el refreshToken
-              const refreshResponse = await axios.post('http://192.168.0.8:3000/auth/refresh-token', {}, {
+              const refreshResponse = await axios.post('http://192.168.1.90:3000/auth/refresh-token', {}, {
                 headers: { Authorization: `Bearer ${refreshToken}` }
               });
 
@@ -45,7 +45,7 @@ const InitialScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList
               await saveToken('refreshToken', refreshResponse.data.refreshToken);
 
               // Navega a la pantalla principal
-              navigation.navigate('Home', { response: refreshResponse.data });
+              navigation.navigate('Home');
             } catch (refreshError) {
               console.error('Error al renovar el token', refreshError);
               navigation.navigate('Login');  // Si la renovación falla, redirige al Login

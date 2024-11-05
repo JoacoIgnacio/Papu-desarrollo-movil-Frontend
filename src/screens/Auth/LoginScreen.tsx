@@ -1,3 +1,4 @@
+import React from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Button, Input, Text, useTheme } from '@rneui/themed';
 import { View, ActivityIndicator } from 'react-native'; // Importa ActivityIndicator
@@ -33,7 +34,7 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>)
       console.log('Password:', password);
       
 
-      const response = await axios.post('http://192.168.0.8:3000/auth/login', { username, password });
+      const response = await axios.post('http://192.168.1.90:3000/auth/login', { username, password });
       
       console.log(response.data);
 
@@ -43,7 +44,7 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>)
         await saveToken('accessToken', accessToken);
         await saveToken('refreshToken', refreshToken);
         // Aquí se pasa directamente el nombre de usuario desde el estado
-        navigation.navigate('Home', { response: response.data }); // Pasar el nombre de usuario desde el estado
+        navigation.navigate('Home'); // Pasar el nombre de usuario desde el estado
       } else {
         setErrorMessage('Usuario o contraseña incorrectos.');
       }

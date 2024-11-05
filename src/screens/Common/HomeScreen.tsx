@@ -4,13 +4,12 @@ import { View, Animated, ActivityIndicator, TouchableOpacity, StyleSheet } from 
 import { useEffect, useState, useRef } from 'react';
 import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import { styles } from './HomeScreen.styles';
+import React from 'react-native';
+import { getUserId } from '../../services/authStorage';
 
-type HomeScreenRouteParams = {
-  response: any;
-};
 
 export const HomeScreen = ({ route, navigation }: NativeStackScreenProps<RootStackParamList, 'Home'>) => {
-  const { response } = route.params as HomeScreenRouteParams; // Recuperar el nombre de usuario desde los parámetros
+  
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
 
@@ -50,7 +49,7 @@ export const HomeScreen = ({ route, navigation }: NativeStackScreenProps<RootSta
   // Mostrar el nombre del usuario en el texto de bienvenida
   return (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Bienvenido {response.decoded?.username}</Text>
+      <Text style={styles.welcomeText}>Bienvenido </Text>
 
       {/* Botón para abrir el menú lateral */}
       <Button
