@@ -1,40 +1,21 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
-const ACCESS_TOKEN_KEY = 'accessToken';
-const REFRESH_TOKEN_KEY = 'refreshToken';
+export async function saveToken(key: string, value: string) {
+  await SecureStore.setItemAsync(key, value);
+}
 
-export const saveTokens = async (accessToken: string, refreshToken: string) => {
-  try {
-    await AsyncStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
-    await AsyncStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
-  } catch (error) {
-    console.error('Error saving tokens:', error);
-  }
-};
+export async function getToken(key: string) {
+  return await SecureStore.getItemAsync(key);
+}
 
-export const getAccessToken = async () => {
-  try {
-    return await AsyncStorage.getItem(ACCESS_TOKEN_KEY);
-  } catch (error) {
-    console.error('Error getting access token:', error);
-    return null;
-  }
-};
+export async function deleteToken(key: string) {
+  await SecureStore.deleteItemAsync(key);
+}
 
-export const getRefreshToken = async () => {
-  try {
-    return await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
-  } catch (error) {
-    console.error('Error getting refresh token:', error);
-    return null;
-  }
-};
+export async function getUserId(key: string) {
+  return await SecureStore.getItemAsync(key);
+}	
 
-export const clearTokens = async () => {
-  try {
-    await AsyncStorage.removeItem(ACCESS_TOKEN_KEY);
-    await AsyncStorage.removeItem(REFRESH_TOKEN_KEY);
-  } catch (error) {
-    console.error('Error clearing tokens:', error);
-  }
-};
+export async function saveUserId(key: string, value: string) {
+  await SecureStore.setItemAsync(key, value);
+}

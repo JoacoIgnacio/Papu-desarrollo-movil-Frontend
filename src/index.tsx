@@ -1,3 +1,4 @@
+import React from 'react-native';
 import { createTheme, ThemeProvider } from '@rneui/themed';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootStackNavigation from './navigation/rootStackNavigation';
