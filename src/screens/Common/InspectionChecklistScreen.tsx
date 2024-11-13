@@ -1,28 +1,187 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
-import { styles } from './InspectionChecklistScreen.styles';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Button, Image, StyleSheet } from 'react-native';
 import { RootStackParamList } from '../../navigation/rootStackNavigation';
+import * as ImagePicker from 'expo-image-picker';
+import { styles } from './InspectionChecklistScreen.styles';
 
-// Define the type for the fields
-type Field = {
-  label: string;
-  name: string;
-  type?: string; // Optional type property
-  placeholder?: string; // Optional placeholder property
-};
+// Definir la interfaz con firma de índice global
+interface FormData {
+  [key: string]: string | { [key: string]: string } | string[];  // Corregido para permitir string[] en el índice
+  nombre: string;
+  patente: string;
+  kilometraje: string;
+  permisos: string;
+  seguro: string;
+  revision: string;
+  licencia: string;
+  curso: string;
+  kitDerrame: string;
+  pala: string;
+  materialAbsorbente: string;
+  cubeta: string;
+  escoba: string;
+  bolsas: string;
+  kitInvierno: string;
+  cadenas: string;
+  mantas: string;
+  herramientas: string;
+  kitEmergencia: string;
+  triangulo: string;
+  gata: string;
+  neumatico: string;
+  llaves: string;
+  barraLlave: string;
+  conos: string;
+  extintor: string;
+  chaleco: string;
+  antifaz: string;
+  mantasSueño: string;
+  extintorPQS1: string;
+  extintorPQS2: string;
+  portaExtintor: string;
+  botiquin: string;
+  cuñas: string;
+  portaCunas: string;
+  baliza: string;
+  pertiga: string;
+  alarmaRetroceso: string;
+  sistemaLuces: string;
+  parabrisas: string;
+  plumillas: string;
+  neumaticoRepuesto: string;
+  cinturonSeguridad: string;
+  apoyacabeza: string;
+  neumaticos: string;
+  linterna: string;
+  cintaReflectante: string;
+  imagenCorporativa: string;
+  interiorCamion: string;
+  plataformaEstructura: string;
+  sistemaHidraulico: string;
+  plataformaOperativa: string;
+  observaciones: { [key: string]: string };  // Aquí definimos el tipo correcto para 'observaciones'
+  archivos: string[];  // Aseguramos que los archivos son un array de strings
+}
 
-const InspectionForm = ({ route, navigation }: NativeStackScreenProps<RootStackParamList, 'Inspection'>) => {
-  const [formData, setFormData] = useState({
+export const InspectionForm = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Inspection'>) => {
+  const [formData, setFormData] = useState<FormData>({
     nombre: '',
-    fecha: '',
     patente: '',
     kilometraje: '',
+    permisos: '',
+    seguro: '',
+    revision: '',
+    licencia: '',
+    curso: '',
+    kitDerrame: '',
+    pala: '',
+    materialAbsorbente: '',
+    cubeta: '',
+    escoba: '',
+    bolsas: '',
+    kitInvierno: '',
+    cadenas: '',
+    mantas: '',
+    herramientas: '',
+    kitEmergencia: '',
+    triangulo: '',
+    gata: '',
+    neumatico: '',
+    llaves: '',
+    barraLlave: '',
+    conos: '',
+    extintor: '',
+    chaleco: '',
+    antifaz: '',
+    mantasSueño: '',
+    extintorPQS1: '',
+    extintorPQS2: '',
+    portaExtintor: '',
+    botiquin: '',
+    cuñas: '',
+    portaCunas: '',
+    baliza: '',
+    pertiga: '',
+    alarmaRetroceso: '',
+    sistemaLuces: '',
+    parabrisas: '',
+    plumillas: '',
+    neumaticoRepuesto: '',
+    cinturonSeguridad: '',
+    apoyacabeza: '',
+    neumaticos: '',
+    linterna: '',
+    cintaReflectante: '',
+    imagenCorporativa: '',
+    interiorCamion: '',
+    plataformaEstructura: '',
+    sistemaHidraulico: '',
+    plataformaOperativa: '',
     observaciones: {},
+    archivos: [],  // Inicializamos como un arreglo vacío de cadenas
   });
 
+  // Solicitar permisos de la cámara
+  const requestCameraPermissions = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    return status === 'granted';
+  };
+
+  // Solicitar permisos para acceder a la galería
+  const requestMediaLibraryPermissions = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    return status === 'granted';
+  };
+
+  // Seleccionar fotos desde la galería
+  const handleSelectImages = async () => {
+    const hasPermission = await requestMediaLibraryPermissions();
+    if (!hasPermission) {
+      alert('Se requiere permiso para acceder a la galería');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images, 
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets) {
+      const newImages = result.assets.map(asset => asset.uri); // Extraemos los URIs de las imágenes seleccionadas
+      setFormData({ ...formData, archivos: [...formData.archivos, ...newImages] }); // Agregar nuevas imágenes al arreglo
+    }
+  };
+
+  // Tomar fotos con la cámara
+  const handleTakePhotos = async () => {
+    const hasPermission = await requestCameraPermissions();
+    if (!hasPermission) {
+      alert('Se requiere permiso para usar la cámara');
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images, 
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets) {
+      const newImages = result.assets.map(asset => asset.uri); // Extraemos los URIs de las imágenes tomadas
+      setFormData({ ...formData, archivos: [...formData.archivos, ...newImages] }); // Agregar nuevas imágenes al arreglo
+    }
+  };
+
+  // Eliminar una imagen seleccionada o tomada
+  const handleRemoveImage = (uri: string) => {
+    const filteredImages = formData.archivos.filter(image => image !== uri);
+    setFormData({ ...formData, archivos: filteredImages });
+  };
+
   const handleInputChange = (name: string, value: string) => {
-    if (name.startsWith('observaciones')) {
+    if (name.includes('observaciones')) {
       const key = name.split('_')[1];
       setFormData({
         ...formData,
@@ -33,103 +192,80 @@ const InspectionForm = ({ route, navigation }: NativeStackScreenProps<RootStackP
     }
   };
 
-  const handleSubmit = () => {
-    console.log(formData);
-  };
-
-  const sections = [
-    { title: 'Información del Vehículo', fields: [
-      { label: 'Nombre', name: 'nombre', type: 'text', placeholder: 'Nombre' },
-      { label: 'Fecha', name: 'fecha', type: 'text', placeholder: 'Fecha (YYYY-MM-DD)' },
-      { label: 'Patente', name: 'patente', type: 'text', placeholder: 'Patente del vehículo' },
-      { label: 'Kilometraje', name: 'kilometraje', type: 'number', placeholder: 'Kilometraje' },
-    ]},
-    { title: 'Documentación Camión/Conductor', fields: [
-      { label: 'Permiso de circulación al día', name: 'circulacion' },
-      { label: 'Seguro obligatorio', name: 'seguro' },
-      { label: 'Revisión Técnica', name: 'revision' },
-      { label: 'Licencia de conducir', name: 'licencia' },
-      { label: 'Curso transporte de sustancias peligrosas', name: 'cursoTransporte' },
-    ]},
-    { title: 'Kit Derrame', fields: [
-      { label: '¿El camión posee Pala?', name: 'pala' },
-      { label: '¿El camión posee Material Absorbente?', name: 'absorbente' },
-      { label: '¿El camión posee Cubeta?', name: 'cubeta' },
-      { label: '¿El camión posee Escoba?', name: 'escoba' },
-      { label: '¿El camión posee Bolsas?', name: 'bolsas' },
-    ]},
-    { title: 'Kit Invierno', fields: [
-      { label: '¿El camión posee Cadenas?', name: 'cadenas' },
-      { label: '¿El camión posee Mantas?', name: 'mantas' },
-      { label: '¿El camión posee Herramientas básicas?', name: 'herramientas' },
-    ]},
-    { title: 'Kit Emergencia', fields: [
-      { label: '¿El camión posee Triángulo Reflectante?', name: 'triangulo' },
-      { label: '¿El camión posee Gata Hidráulica?', name: 'gata' },
-      { label: '¿El camión posee Neumático de Repuesto?', name: 'neumatico' },
-      { label: '¿El camión posee Llaves de Rueda?', name: 'llaves' },
-      { label: '¿El camión posee Barra de Llave de Ruedas?', name: 'barrallave' },
-    ]},
-    { title: 'Kit Sueño', fields: [
-      { label: '¿Cuenta con Antifaz?', name: 'antifaz' },
-      { label: '¿Cuenta con Mantas?', name: 'mantas_sueño' },
-    ]},
-    { title: 'Accesorios', fields: [
-      { label: 'Extintor PQS 1 KG', name: 'PQS1' },
-      { label: 'Extintor PQS 2 KG', name: 'PQS2' },
-      { label: '¿Cuenta con porta extintor?', name: 'portaExtintor' },
-      { label: '¿Cuenta con Botiquín de Primeros Auxilios?', name: 'botiquin' },
-      { label: '¿Cuenta con Linterna?', name: 'linterna' },
-    ]},
-    { title: 'Condiciones del Vehículo', fields: [
-      { label: '¿La Alarma de Retroceso funciona?', name: 'alarma' },
-      { label: '¿Las luces están operativas?', name: 'sistemaLuces' },
-      { label: '¿Las plumillas están en buen estado?', name: 'plumillas' },
-      { label: '¿El cinturón de seguridad está en buen estado?', name: 'cinturon' },
-    ]},
-  ];
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Check List “Mensual Equipos” Comercializadora Ltda.</Text>
+      <Text style={styles.title}>Check List "Mensual Equipos” Comercializadora Ltda.</Text>
 
-      {sections.map((section) => (
-        <View key={section.title}>
-          <Text style={styles.sectionTitle}>{section.title}</Text>
-          {section.fields.map((field: Field) => (
-            <View key={field.name} style={styles.row}>
-              <Text style={styles.label}>{field.label}</Text>
-              {field.type === 'text' || field.type === 'number' ? (
-                <TextInput
-                  style={styles.input}
-                  placeholder={field.placeholder || ''}
-                  onChangeText={(text) => handleInputChange(field.name, text)}
-                />
-              ) : (
-                <View>
-                  <View style={styles.checkboxContainer}>
-                    <TouchableOpacity onPress={() => handleInputChange(field.name, 'si')}>
-                      <Text style={styles.checkboxText}>Sí</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => handleInputChange(field.name, 'no')}>
-                      <Text style={styles.checkboxText}>No</Text>
-                    </TouchableOpacity>
-                  </View>
-                  <TextInput
-                    style={styles.textarea}
-                    placeholder="Observaciones"
-                    onChangeText={(text) => handleInputChange(`observaciones_${field.name}`, text)}
-                  />
-                </View>
-              )}
-            </View>
-          ))}
+      {/* Tarjeta 1: Nombre */}
+      <View style={styles.card}>
+        <Text style={styles.label}>Nombre</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Nombre"
+          value={formData.nombre}
+          onChangeText={(text) => handleInputChange('nombre', text)}
+        />
+      </View>
+
+      {/* Tarjeta 2: Patente */}
+      <View style={styles.card}>
+        <Text style={styles.label}>Patente</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Patente del vehículo"
+          value={formData.patente}
+          onChangeText={(text) => handleInputChange('patente', text)}
+        />
+      </View>
+
+      {/* Tarjeta 3: Kilometraje */}
+      <View style={styles.card}>
+        <Text style={styles.label}>Kilometraje</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Kilometraje del vehículo"
+          value={formData.kilometraje}
+          onChangeText={(text) => handleInputChange('kilometraje', text)}
+        />
+      </View>
+
+      {/* Sección para adjuntar fotos */}
+      <Text style={styles.sectionTitle}>Adjuntar archivo (opcional)</Text>
+      <View style={styles.card}>
+        <Text style={styles.label}>¿Adjuntar fotos?</Text>
+        <View style={styles.checkboxContainer}>
+          <TouchableOpacity
+            style={styles.checkboxButton}
+            onPress={handleSelectImages}
+          >
+            <Text style={styles.checkboxText}>Seleccionar fotos</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.checkboxButton}
+            onPress={handleTakePhotos}
+          >
+            <Text style={styles.checkboxText}>Tomar fotos</Text>
+          </TouchableOpacity>
         </View>
-      ))}
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Enviar</Text>
-      </TouchableOpacity>
+        {/* Mostrar las imágenes seleccionadas o tomadas */}
+        {formData.archivos.length > 0 && (
+          <View>
+            {formData.archivos.map((uri, index) => (
+              <View key={index} style={{ marginBottom: 10 }}>
+                <Image source={{ uri }} style={{ width: 100, height: 100 }} />
+                <Button title="Eliminar Foto" onPress={() => handleRemoveImage(uri)} />
+              </View>
+            ))}
+          </View>
+        )}
+      </View>
+
+      {/* Botón Enviar */}
+      <Button
+        title="Enviar"
+        onPress={() => navigation.navigate('Home')}
+      />
     </ScrollView>
   );
 };

@@ -3,18 +3,26 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     padding: 20,
+    backgroundColor: '#f9f9f9',
+  },
+  card: {
+    backgroundColor: '#fff',
+    padding: 20,
+    marginBottom: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 3,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  row: {
-    marginBottom: 15,
-  },
   label: {
     fontSize: 16,
-    marginBottom: 5,
+    marginBottom: 10,
   },
   input: {
     borderWidth: 1,
@@ -22,6 +30,7 @@ export const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     backgroundColor: '#fff',
+    marginBottom: 15,
   },
   sectionTitle: {
     fontSize: 18,
@@ -33,9 +42,21 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginVertical: 10,
   },
+  checkboxButton: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    width: '45%',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  checkboxSelected: {
+    backgroundColor: '#66bb6a', // Green for selected state
+    borderColor: '#66bb6a',
+  },
   checkboxText: {
     fontSize: 16,
-    marginHorizontal: 10,
   },
   textarea: {
     borderWidth: 1,
@@ -45,17 +66,5 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
     height: 80,
     textAlignVertical: 'top',
-  },
-  button: {
-    marginTop: 20,
-    backgroundColor: '#FF497C',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
   },
 });
