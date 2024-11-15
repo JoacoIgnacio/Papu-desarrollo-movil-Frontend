@@ -4,6 +4,9 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Button, Image, Sty
 import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import * as ImagePicker from 'expo-image-picker';
 import { styles } from './DriverChecklistScreen.styles';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+import { getUserId } from '../../services/authStorage';
+import axios from 'axios';
 
 export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Driver'>) => {
   const [formData, setFormData] = useState({
@@ -105,6 +108,46 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
     setFormData({ ...formData, archivos: filteredImages });
   };
 
+  const handleSubmit = async () => {
+    const userId = await getUserId('userId');
+    console.log('User ID:', userId);
+    try {
+      const name = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736bffaa13eade062a1d230",
+          questionId: "6736d70b8a664768001bb594",
+          userId: userId,
+          response: formData.nombre,
+        });
+
+      const date = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736bffaa13eade062a1d230",
+          questionId: "6736d7118a664768001bb596",
+          userId: userId,
+          response: formData.fecha,
+        });
+      const patente = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736bffaa13eade062a1d230",
+          questionId: "6736d7158a664768001bb598",
+          userId: userId,
+          response: formData.patente,
+        });
+      const horasSueño = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736bffaa13eade062a1d230",
+          questionId: "6736c01ea13eade062a1d232",
+          userId: userId,
+          response: formData.horasSueño,
+          observations : formData.observaciones.horasSueño,
+        });
+
+    } catch (error) {
+      console.error('Error al enviar el formulario:', error);
+    };
+  }
+  
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Check List "Conductores” Comercializadora Ltda.</Text>
@@ -202,7 +245,10 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
 
       <Button
         title="Enviar"
-        onPress={() => navigation.navigate('Home')}
+        onPress={() => {
+          handleSubmit();
+          navigation.navigate('Home');
+        }}
       />
     </ScrollView>
   );

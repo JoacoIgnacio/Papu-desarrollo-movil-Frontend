@@ -5,7 +5,7 @@ import { View, ActivityIndicator } from 'react-native';
 import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import { styles } from './LoginScreen.styles';
 import axios from 'axios';
-import { saveToken } from '../../services/authStorage';
+import { saveToken, saveUserId } from '../../services/authStorage';
 
 const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>) => {
   const { theme } = useTheme();
@@ -32,12 +32,13 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>)
       console.log('Email:', username);
       console.log('Password:', password);
 
-      const response = await axios.post('http://192.168.0.9:3000/auth/login', { username, password });
+      const response = await axios.post('http://192.168.1.88:3000/auth/login', { username, password });
 
       if (response.data && response.data.accessToken) {
         const { accessToken, refreshToken } = response.data;
         await saveToken('accessToken', accessToken);
         await saveToken('refreshToken', refreshToken);
+        await saveUserId('userId', response.data.decoded.sub);
         navigation.navigate('Home');
       } else {
         setErrorMessage('Usuario o contraseña incorrectos.');

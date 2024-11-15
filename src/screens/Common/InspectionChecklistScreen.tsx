@@ -4,6 +4,8 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Button, Image, Sty
 import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import * as ImagePicker from 'expo-image-picker';
 import { styles } from './InspectionChecklistScreen.styles';
+import { getUserId } from '../../services/authStorage';
+import axios from 'axios';
 
 // Definir la interfaz con firma de índice global
 interface FormData {
@@ -192,6 +194,35 @@ export const InspectionForm = ({ navigation }: NativeStackScreenProps<RootStackP
     }
   };
 
+  const handleSubmit = async () => {
+    const userId = await getUserId('userId');
+    try {
+      const name = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736e5322861c9b6a29d4925",
+          questionId: "6736d70b8a664768001bb594",
+          userId: userId,
+          response: formData.nombre,
+        });
+      const patente = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736e5322861c9b6a29d4925",
+          questionId: "6736d7158a664768001bb598",
+          userId: userId,
+          response: formData.patente,
+        });
+      const kilometraje = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736e5322861c9b6a29d4925",
+          questionId: "6736dfa98a664768001bb5c8",
+          userId: userId,
+          response: formData.kilometraje,
+        });
+    } catch (error) {
+      console.error('Error al enviar el formulario:', error);
+    }
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Check List "Mensual Equipos” Comercializadora Ltda.</Text>
@@ -264,7 +295,10 @@ export const InspectionForm = ({ navigation }: NativeStackScreenProps<RootStackP
       {/* Botón Enviar */}
       <Button
         title="Enviar"
-        onPress={() => navigation.navigate('Home')}
+        onPress={() => {
+          handleSubmit();
+          navigation.navigate('Home');
+        }}
       />
     </ScrollView>
   );

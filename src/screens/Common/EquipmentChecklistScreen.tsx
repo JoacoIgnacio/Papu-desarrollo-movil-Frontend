@@ -4,6 +4,8 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView, Button, Image, Sty
 import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import * as ImagePicker from 'expo-image-picker';
 import { styles } from './EquipmentChecklistScreen.styles';
+import { getUserId } from '../../services/authStorage';
+import axios from 'axios';
 
 export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Equipment'>) => {
   const [formData, setFormData] = useState({
@@ -116,6 +118,162 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
       setFormData({ ...formData, [name]: value });
     }
   };
+
+  const handleSubmit = async () => {
+    const userId = await getUserId('userId');
+    try {
+      const name = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736d70b8a664768001bb594",
+          userId: userId,
+          response: formData.nombre,
+        });
+      const date = await axios.post(`http://192.168.1.88:3001/answers`,
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736d7118a664768001bb596",
+          userId: userId,
+          response: formData.fecha,
+        });
+      const patente = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736d7158a664768001bb598",
+          userId: userId,
+          response: formData.patente,
+        });
+      const kilometraje = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736dfa98a664768001bb5c8",
+          userId: userId,
+          response: formData.kilometraje,
+        });
+      const luces = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736ddad8a664768001bb5aa",
+          userId: userId,
+          response: formData.luces,
+          observations: formData.observaciones.luces,
+        });
+      const neumaticos = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736ddb28a664768001bb5ac",
+          userId: userId,
+          response: formData.neumaticos,
+          observations: formData.observaciones.neumaticos,
+        });
+      const parabrisas = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736ddb98a664768001bb5ae",
+          userId: userId,
+          response: formData.parabrisas,
+          observations: formData.observaciones.parabrisas,
+        });
+      const carroceria = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736ddc08a664768001bb5b0",
+          userId: userId,
+          response: formData.carroceria,
+          observations: formData.observaciones.carroceria,
+        });
+      const aguaAceite = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736ddc78a664768001bb5b2",
+          userId: userId,
+          response: formData.aguaAceite,
+          observations: formData.observaciones.aguaAceite,
+        });
+      const documentacion = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736ddce8a664768001bb5b4",
+          userId: userId,
+          response: formData.documentacion,
+          observations: formData.observaciones.documentacion,
+        });
+      const botiquin = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736ddd58a664768001bb5b6",
+          userId: userId,
+          response: formData.botiquin,
+          observations: formData.observaciones.botiquin,
+        });
+      const kitDerrame = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736dddb8a664768001bb5b8",
+          userId: userId,
+          response: formData.kitDerrame,
+          observations: formData.observaciones.kitDerrame,
+        });
+      const kitEmergencia = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736dde28a664768001bb5ba",
+          userId: userId,
+          response: formData.kitEmergencia,
+          observations: formData.observaciones.kitEmergencia,
+        });
+      const kitInvierno = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736dde98a664768001bb5bc",
+          userId: userId,
+          response: formData.kitInvierno,
+          observations: formData.observaciones.kitInvierno,
+        });
+      const extintor = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736ddf08a664768001bb5be",
+          userId: userId,
+          response: formData.extintor,
+          observations: formData.observaciones.extintor,
+        });
+      const volante = await axios.post('http://192.168.1.88:3001/answers', 
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736ddf78a664768001bb5c0",
+          userId: userId,
+          response: formData.volante,
+          observations: formData.observaciones.volante,
+        });
+      const gps = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736ddfd8a664768001bb5c2",
+          userId: userId,
+          response: formData.gps,
+          observations: formData.observaciones.gps,
+        });
+      const rco = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736de048a664768001bb5c4",
+          userId: userId,
+          response: formData.rco,
+          observations: formData.observaciones.rco,
+        });
+      const trabaTuercas = await axios.post('http://192.168.1.88:3001/answers',
+        {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736de0a8a664768001bb5c6",
+          userId: userId,
+          response: formData.trabaTuercas,
+          observations: formData.observaciones.trabaTuercas,
+        });
+      } catch (error) {
+        console.error('Error al enviar el formulario:', error);
+      }
+    } 
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -587,7 +745,10 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
 
       <Button
         title="Enviar"
-        onPress={() => navigation.navigate('Home')}
+        onPress={() => {
+          handleSubmit();
+          navigation.navigate('Home');
+        }}
       />
     </ScrollView>
   );
