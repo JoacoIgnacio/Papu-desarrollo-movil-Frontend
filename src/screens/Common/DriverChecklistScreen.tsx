@@ -1,8 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Button, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Button, Image, Alert, StyleSheet } from 'react-native';
 import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import * as ImagePicker from 'expo-image-picker';
+import * as LocalAuthentication from 'expo-local-authentication';
 import { styles } from './DriverChecklistScreen.styles';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { getUserId } from '../../services/authStorage';
@@ -108,45 +109,73 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
     setFormData({ ...formData, archivos: filteredImages });
   };
 
+    // Autenticación biométrica
+    const handleBiometricAuth = async () => {
+      const hasHardware = await LocalAuthentication.hasHardwareAsync();
+      if (!hasHardware) {
+        Alert.alert('Error', 'La autenticación biométrica no está disponible en este dispositivo');
+        return false;
+      }
+  
+      const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+      if (!isEnrolled) {
+        Alert.alert('Error', 'No hay datos biométricos registrados en este dispositivo');
+        return false;
+      }
+  
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: 'Confirma tu identidad para enviar el formulario',
+      });
+  
+      return result.success;
+    };
+
+  // Enviar formulario con autenticación biométrica y luego enviar los datos al servidor
   const handleSubmit = async () => {
-    const userId = await getUserId('userId');
-    console.log('User ID:', userId);
-    try {
-      const name = await axios.post('http://192.168.1.88:3001/answers',
-        {
+    const isAuthenticated = await handleBiometricAuth();
+    if (isAuthenticated) {
+      const userId = await getUserId('userId');
+      console.log('User ID:', userId);
+      try {
+        await axios.post('http://192.168.0.9:3001/answers', {
           questionnaireId: "6736bffaa13eade062a1d230",
           questionId: "6736d70b8a664768001bb594",
           userId: userId,
           response: formData.nombre,
         });
 
-      const date = await axios.post('http://192.168.1.88:3001/answers',
-        {
+        await axios.post('http://192.168.0.9:3001/answers', {
           questionnaireId: "6736bffaa13eade062a1d230",
           questionId: "6736d7118a664768001bb596",
           userId: userId,
           response: formData.fecha,
         });
-      const patente = await axios.post('http://192.168.1.88:3001/answers',
-        {
+
+        await axios.post('http://192.168.0.9:3001/answers', {
           questionnaireId: "6736bffaa13eade062a1d230",
           questionId: "6736d7158a664768001bb598",
           userId: userId,
           response: formData.patente,
         });
-      const horasSueño = await axios.post('http://192.168.1.88:3001/answers',
-        {
+
+        await axios.post('http://192.168.0.9:3001/answers', {
           questionnaireId: "6736bffaa13eade062a1d230",
           questionId: "6736c01ea13eade062a1d232",
           userId: userId,
           response: formData.horasSueño,
-          observations : formData.observaciones.horasSueño,
+          observations: formData.observaciones.horasSueño,
         });
 
-    } catch (error) {
-      console.error('Error al enviar el formulario:', error);
-    };
-  }
+        
+        navigation.navigate('Home');
+      } catch (error) {
+        console.error('Error al enviar el formulario:', error);
+        Alert.alert('Error', 'No se pudo enviar el formulario. Inténtalo de nuevo.');
+      }
+    } else {
+      Alert.alert('Error', 'La autenticación falló, no se puede enviar el formulario');
+    }
+  };
   
   return (
     <ScrollView contentContainerStyle={styles.container}>

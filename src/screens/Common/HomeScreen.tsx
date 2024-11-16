@@ -5,7 +5,6 @@ import { useEffect, useState, useRef } from 'react';
 import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import { styles } from './HomeScreen.styles';
 import React from 'react-native';
-import { getUserId } from '../../services/authStorage';
 
 
 export const HomeScreen = ({ route, navigation }: NativeStackScreenProps<RootStackParamList, 'Home'>) => {
@@ -55,6 +54,13 @@ export const HomeScreen = ({ route, navigation }: NativeStackScreenProps<RootSta
       <Button
         title="Cuestionarios"
         onPress={toggleMenu}
+        buttonStyle={styles.button}
+        titleStyle={styles.buttonText}
+      />
+
+      <Button
+        title="Historial de Cuestionarios"
+        onPress={() => navigation.navigate('QuestionnaireHistory')}
         buttonStyle={styles.button}
         titleStyle={styles.buttonText}
       />

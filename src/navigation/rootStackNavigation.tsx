@@ -7,6 +7,7 @@ import InitialScreen from '../screens/InitialScreen';
 import { DriverForm } from '../screens/Common/DriverChecklistScreen';
 import { EquipmentForm } from '../screens/Common/EquipmentChecklistScreen';
 import InspectionForm from '../screens/Common/InspectionChecklistScreen';
+import { QuestionnaireHistory } from '../screens/Common/QuestionnaireHistory';
 
 export type RootStackParamList = {
   Initial: undefined;
@@ -15,6 +16,7 @@ export type RootStackParamList = {
   Driver: undefined;
   Equipment: undefined;
   Inspection: undefined;
+  QuestionnaireHistory: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -26,6 +28,7 @@ const RootStackNavigation = () => {
         <Stack.Group screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Initial" component={InitialScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="QuestionnaireHistory" component={QuestionnaireHistory} />
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Driver" component={DriverForm} />
           <Stack.Screen name="Equipment" component={EquipmentForm} />
