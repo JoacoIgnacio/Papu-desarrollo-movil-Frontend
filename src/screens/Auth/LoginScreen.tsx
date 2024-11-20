@@ -32,7 +32,7 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>)
       console.log('Email:', username);
       console.log('Password:', password);
 
-      const response = await axios.post('http://192.168.0.9:3000/auth/login', { username, password });
+      const response = await axios.post(`https://${process.env.IP}:3000/auth/login`, { username, password });
 
       if (response.data && response.data.accessToken) {
         const { accessToken, refreshToken } = response.data;

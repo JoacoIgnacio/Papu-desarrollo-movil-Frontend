@@ -221,21 +221,21 @@ export const InspectionForm = ({ navigation }: NativeStackScreenProps<RootStackP
     if (isAuthenticated){
       const userId = await getUserId('userId');
     try {
-      const name = await axios.post('http://192.168.0.9:3001/answers',
+      const name = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736e5322861c9b6a29d4925",
           questionId: "6736d70b8a664768001bb594",
           userId: userId,
           response: formData.nombre,
         });
-      const patente = await axios.post('http://192.168.0.9:3001/answers',
+      const patente = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736e5322861c9b6a29d4925",
           questionId: "6736d7158a664768001bb598",
           userId: userId,
           response: formData.patente,
         });
-      const kilometraje = await axios.post('http://192.168.0.9:3001/answers',
+      const kilometraje = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736e5322861c9b6a29d4925",
           questionId: "6736dfa98a664768001bb5c8",

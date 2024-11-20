@@ -137,28 +137,28 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
       const userId = await getUserId('userId');
       console.log('User ID:', userId);
       try {
-        await axios.post('http://192.168.0.9:3001/answers', {
+        await axios.post(`http://${process.env.IP}:3001/answers`, {
           questionnaireId: "6736bffaa13eade062a1d230",
           questionId: "6736d70b8a664768001bb594",
           userId: userId,
           response: formData.nombre,
         });
 
-        await axios.post('http://192.168.0.9:3001/answers', {
+        await axios.post(`http://${process.env.IP}:3001/answers`, {
           questionnaireId: "6736bffaa13eade062a1d230",
           questionId: "6736d7118a664768001bb596",
           userId: userId,
           response: formData.fecha,
         });
 
-        await axios.post('http://192.168.0.9:3001/answers', {
+        await axios.post(`http://${process.env.IP}:3001/answers`, {
           questionnaireId: "6736bffaa13eade062a1d230",
           questionId: "6736d7158a664768001bb598",
           userId: userId,
           response: formData.patente,
         });
 
-        await axios.post('http://192.168.0.9:3001/answers', {
+        await axios.post(`http://${process.env.IP}:3001/answers`, {
           questionnaireId: "6736bffaa13eade062a1d230",
           questionId: "6736c01ea13eade062a1d232",
           userId: userId,

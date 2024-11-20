@@ -146,35 +146,35 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
     if (isAuthenticated) {
       const userId = await getUserId('userId');
     try {
-      const name = await axios.post('http://192.168.0.9:3001/answers',
+      const name = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736d70b8a664768001bb594",
           userId: userId,
           response: formData.nombre,
         });
-      const date = await axios.post(`http://192.168.0.9:3001/answers`,
+      const date = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736d7118a664768001bb596",
           userId: userId,
           response: formData.fecha,
         });
-      const patente = await axios.post('http://192.168.0.9:3001/answers',
+      const patente = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736d7158a664768001bb598",
           userId: userId,
           response: formData.patente,
         });
-      const kilometraje = await axios.post('http://192.168.0.9:3001/answers',
+      const kilometraje = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736dfa98a664768001bb5c8",
           userId: userId,
           response: formData.kilometraje,
         });
-      const luces = await axios.post('http://192.168.0.9:3001/answers',
+      const luces = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736ddad8a664768001bb5aa",
@@ -182,7 +182,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           response: formData.luces,
           observations: formData.observaciones.luces,
         });
-      const neumaticos = await axios.post('http://192.168.0.9:3001/answers',
+      const neumaticos = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736ddb28a664768001bb5ac",
@@ -190,7 +190,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           response: formData.neumaticos,
           observations: formData.observaciones.neumaticos,
         });
-      const parabrisas = await axios.post('http://192.168.0.9:3001/answers',
+      const parabrisas = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736ddb98a664768001bb5ae",
@@ -198,7 +198,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           response: formData.parabrisas,
           observations: formData.observaciones.parabrisas,
         });
-      const carroceria = await axios.post('http://192.168.0.9:3001/answers',
+      const carroceria = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736ddc08a664768001bb5b0",
@@ -206,7 +206,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           response: formData.carroceria,
           observations: formData.observaciones.carroceria,
         });
-      const aguaAceite = await axios.post('http://192.168.0.9:3001/answers',
+      const aguaAceite = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736ddc78a664768001bb5b2",
@@ -214,7 +214,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           response: formData.aguaAceite,
           observations: formData.observaciones.aguaAceite,
         });
-      const documentacion = await axios.post('http://192.168.0.9:3001/answers',
+      const documentacion = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736ddce8a664768001bb5b4",
@@ -222,7 +222,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           response: formData.documentacion,
           observations: formData.observaciones.documentacion,
         });
-      const botiquin = await axios.post('http://192.168.0.9:3001/answers',
+      const botiquin = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736ddd58a664768001bb5b6",
@@ -230,7 +230,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           response: formData.botiquin,
           observations: formData.observaciones.botiquin,
         });
-      const kitDerrame = await axios.post('http://192.168.0.9:3001/answers',
+      const kitDerrame = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736dddb8a664768001bb5b8",
@@ -238,7 +238,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           response: formData.kitDerrame,
           observations: formData.observaciones.kitDerrame,
         });
-      const kitEmergencia = await axios.post('http://192.168.0.9:3001/answers',
+      const kitEmergencia = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736dde28a664768001bb5ba",
@@ -246,7 +246,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           response: formData.kitEmergencia,
           observations: formData.observaciones.kitEmergencia,
         });
-      const kitInvierno = await axios.post('http://192.168.0.9:3001/answers',
+      const kitInvierno = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736dde98a664768001bb5bc",
@@ -254,7 +254,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           response: formData.kitInvierno,
           observations: formData.observaciones.kitInvierno,
         });
-      const extintor = await axios.post('http://192.168.0.9:3001/answers',
+      const extintor = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736ddf08a664768001bb5be",
@@ -262,7 +262,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           response: formData.extintor,
           observations: formData.observaciones.extintor,
         });
-      const volante = await axios.post('http://192.168.0.9:3001/answers', 
+      const volante = await axios.post(`http://${process.env.IP}:3001/answers`, 
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736ddf78a664768001bb5c0",
@@ -270,7 +270,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           response: formData.volante,
           observations: formData.observaciones.volante,
         });
-      const gps = await axios.post('http://192.168.0.9:3001/answers',
+      const gps = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736ddfd8a664768001bb5c2",
@@ -278,7 +278,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           response: formData.gps,
           observations: formData.observaciones.gps,
         });
-      const rco = await axios.post('http://192.168.0.9:3001/answers',
+      const rco = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736de048a664768001bb5c4",
@@ -286,7 +286,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           response: formData.rco,
           observations: formData.observaciones.rco,
         });
-      const trabaTuercas = await axios.post('http://192.168.0.9:3001/answers',
+      const trabaTuercas = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
           questionId: "6736de0a8a664768001bb5c6",
