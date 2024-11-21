@@ -7,6 +7,7 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import { styles } from './InspectionChecklistScreen.styles';
 import { getUserId } from '../../services/authStorage';
 import axios from 'axios';
+import { config } from 'dotenv';
 
 // Definir la interfaz con firma de índice global
 interface FormData {

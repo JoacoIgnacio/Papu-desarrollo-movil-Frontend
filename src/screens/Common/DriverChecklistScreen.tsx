@@ -8,6 +8,7 @@ import { styles } from './DriverChecklistScreen.styles';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { getUserId } from '../../services/authStorage';
 import axios from 'axios';
+import { config } from 'dotenv';
 
 export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Driver'>) => {
   const [formData, setFormData] = useState({

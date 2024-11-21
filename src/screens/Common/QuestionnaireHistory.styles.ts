@@ -38,4 +38,13 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 50,
   },
+  item: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc'
+  },
+  date: {
+    fontSize: 14,
+    color: '#FF497C'
+  }
 });

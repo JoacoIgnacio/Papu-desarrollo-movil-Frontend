@@ -3,6 +3,7 @@ import { Button, Text } from '@rneui/themed';
 import { View } from 'react-native';
 import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import { styles } from './QuestionnaireSelectionScreen.styles';
+import { config } from 'dotenv';
 
 const QuestionnaireSelectionScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>) => {
   return (

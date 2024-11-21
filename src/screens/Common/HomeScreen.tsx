@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import { styles } from './HomeScreen.styles';
 import React from 'react-native';
+import { config } from 'dotenv';
 
 
 export const HomeScreen = ({ route, navigation }: NativeStackScreenProps<RootStackParamList, 'Home'>) => {

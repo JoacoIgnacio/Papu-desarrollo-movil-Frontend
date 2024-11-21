@@ -6,8 +6,9 @@ import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import { styles } from './LoginScreen.styles';
 import axios from 'axios';
 import { saveToken, saveUserId } from '../../services/authStorage';
+import { config } from 'dotenv';
 
-const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>) => {
+const LoginScreen = ({ navigation}: NativeStackScreenProps<RootStackParamList>) => {
   const { theme } = useTheme();
   const [username, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -31,8 +32,9 @@ const LoginScreen = ({ navigation }: NativeStackScreenProps<RootStackParamList>)
     try {
       console.log('Email:', username);
       console.log('Password:', password);
+      console.log(`http://${process.env.IP}:3000/auth/login`);
 
-      const response = await axios.post(`https://${process.env.IP}:3000/auth/login`, { username, password });
+      const response = await axios.post(`http://${process.env.IP}:3000/auth/login`, { username, password });
 
       if (response.data && response.data.accessToken) {
         const { accessToken, refreshToken } = response.data;

@@ -7,6 +7,7 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import { styles } from './EquipmentChecklistScreen.styles';
 import { getUserId } from '../../services/authStorage';
 import axios from 'axios';
+import { config } from 'dotenv';
 
 export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Equipment'>) => {
   const [formData, setFormData] = useState({
@@ -193,7 +194,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
       const parabrisas = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
-          questionId: "6736ddb98a664768001bb5ae",
+          questionId: "6736ddb68a664768001bb5ae",
           userId: userId,
           response: formData.parabrisas,
           observations: formData.observaciones.parabrisas,
@@ -201,7 +202,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
       const carroceria = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
-          questionId: "6736ddc08a664768001bb5b0",
+          questionId: "6736ddba8a664768001bb5b0",
           userId: userId,
           response: formData.carroceria,
           observations: formData.observaciones.carroceria,
@@ -209,7 +210,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
       const aguaAceite = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
-          questionId: "6736ddc78a664768001bb5b2",
+          questionId: "6736ddbe8a664768001bb5b2",
           userId: userId,
           response: formData.aguaAceite,
           observations: formData.observaciones.aguaAceite,
@@ -217,7 +218,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
       const documentacion = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
-          questionId: "6736ddce8a664768001bb5b4",
+          questionId: "6736ddc18a664768001bb5b4",
           userId: userId,
           response: formData.documentacion,
           observations: formData.observaciones.documentacion,
@@ -225,7 +226,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
       const botiquin = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
-          questionId: "6736ddd58a664768001bb5b6",
+          questionId: "6736ddc58a664768001bb5b6",
           userId: userId,
           response: formData.botiquin,
           observations: formData.observaciones.botiquin,
@@ -233,7 +234,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
       const kitDerrame = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
-          questionId: "6736dddb8a664768001bb5b8",
+          questionId: "6736ddc88a664768001bb5b8",
           userId: userId,
           response: formData.kitDerrame,
           observations: formData.observaciones.kitDerrame,
@@ -241,7 +242,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
       const kitEmergencia = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
-          questionId: "6736dde28a664768001bb5ba",
+          questionId: "6736ddcb8a664768001bb5ba",
           userId: userId,
           response: formData.kitEmergencia,
           observations: formData.observaciones.kitEmergencia,
@@ -249,7 +250,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
       const kitInvierno = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
-          questionId: "6736dde98a664768001bb5bc",
+          questionId: "6736ddd18a664768001bb5bc",
           userId: userId,
           response: formData.kitInvierno,
           observations: formData.observaciones.kitInvierno,
@@ -257,7 +258,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
       const extintor = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
-          questionId: "6736ddf08a664768001bb5be",
+          questionId: "6736ddd58a664768001bb5be",
           userId: userId,
           response: formData.extintor,
           observations: formData.observaciones.extintor,
@@ -265,7 +266,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
       const volante = await axios.post(`http://${process.env.IP}:3001/answers`, 
         {
           questionnaireId: "6736de612b80aa3d639437b7",
-          questionId: "6736ddf78a664768001bb5c0",
+          questionId: "6736ddd98a664768001bb5c0",
           userId: userId,
           response: formData.volante,
           observations: formData.observaciones.volante,
@@ -273,7 +274,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
       const gps = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
-          questionId: "6736ddfd8a664768001bb5c2",
+          questionId: "6736dddc8a664768001bb5c2",
           userId: userId,
           response: formData.gps,
           observations: formData.observaciones.gps,
@@ -281,7 +282,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
       const rco = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
-          questionId: "6736de048a664768001bb5c4",
+          questionId: "6736dde08a664768001bb5c4",
           userId: userId,
           response: formData.rco,
           observations: formData.observaciones.rco,
@@ -289,7 +290,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
       const trabaTuercas = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
           questionnaireId: "6736de612b80aa3d639437b7",
-          questionId: "6736de0a8a664768001bb5c6",
+          questionId: "6736dde58a664768001bb5c6",
           userId: userId,
           response: formData.trabaTuercas,
           observations: formData.observaciones.trabaTuercas,

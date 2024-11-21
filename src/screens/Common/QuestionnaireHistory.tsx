@@ -1,35 +1,67 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/rootStackNavigation';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, FlatList } from 'react-native';
 import { styles } from './QuestionnaireHistory.styles';
+import { config } from 'dotenv';
+import axios from 'axios';
+import { getUserId } from '../../services/authStorage';
 
 export const QuestionnaireHistory = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'QuestionnaireHistory'>) => {
-  // Datos de ejemplo para mostrar cuestionarios
-  const sampleHistory = [
-    { id: '1', title: 'Cuestionario Conductor', date: '2024-11-01' },
-    { id: '2', title: 'Cuestionario Equipamiento', date: '2024-11-02' },
-    { id: '3', title: 'Cuestionario Inspección', date: '2024-11-03' },
-  ];
+  const [history, setHistory] = useState<{ id: string; title: string; date: string; }[]>([]);
 
-  const handleSelectQuestionnaire = (questionnaireId: string) => {
-    // Por ahora, simplemente muestra un alert en lugar de navegar a los detalles
-    alert(`Seleccionaste el cuestionario con ID: ${questionnaireId}`);
+
+  useEffect(() => {
+    // Función para obtener los datos del endpoint
+    const fetchData = async () => {
+      const userId = await getUserId('userId');
+      
+      try {
+        
+        
+        const response = await axios.get(`http://${process.env.IP}:3001/answers/${userId}/questionnaires`);
+        const data = response.data;
+
+        // Mapea los datos recibidos al formato necesario
+        const formattedData = data.map((item: { questionnaire: { _id: string; title: string; }; date: string; }) => ({
+          id: item.questionnaire._id,
+          title: item.questionnaire.title,
+          date: item.date
+        }));
+
+        setHistory(formattedData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    
+
+    fetchData();
+  }, []);
+  const handleSelectQuestionnaire = (id: string, date:string) => {
+
+    if(id === '6736bffaa13eade062a1d230'){
+      navigation.navigate('DriverHistory', { id, date });
+    }else if (id === '6736de612b80aa3d639437b7'){
+      navigation.navigate('EquipmentHistory', { id, date });
+    }else if (id === '6736e5322861c9b6a29d4925'){
+      navigation.navigate('InspectionHistory', { id, date });
+    }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Historial de Cuestionarios</Text>
 
-      {sampleHistory.length > 0 ? (
-        sampleHistory.map((questionnaire, index) => (
+      {history.length > 0 ? (
+        history.map((questionnaire, index) => (
           <TouchableOpacity 
             key={index} 
             style={styles.card} 
-            onPress={() => handleSelectQuestionnaire(questionnaire.id)}
+            onPress={() => handleSelectQuestionnaire(questionnaire.id,questionnaire.date  )}
           >
             <Text style={styles.questionnaireTitle}>{questionnaire.title}</Text>
-            <Text style={styles.questionnaireDate}>{questionnaire.date}</Text>
+            <Text style={styles.questionnaireDate}>{questionnaire.date.split('T')[0]}</Text>
           </TouchableOpacity>
         ))
       ) : (
@@ -38,5 +70,6 @@ export const QuestionnaireHistory = ({ navigation }: NativeStackScreenProps<Root
     </ScrollView>
   );
 };
+
 
 export default QuestionnaireHistory;

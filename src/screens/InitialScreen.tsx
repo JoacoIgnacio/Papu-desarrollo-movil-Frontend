@@ -7,6 +7,7 @@ import { styles } from './InitialScreen.styles';
 import { getToken, saveToken, saveUserId} from '../services/authStorage';  // Importa el servicio de almacenamiento
 import axios from 'axios';  // Asegúrate de que axios está instalado
 import React from 'react-native';
+import { config } from 'dotenv';
 
 const { width } = Dimensions.get('window');
 

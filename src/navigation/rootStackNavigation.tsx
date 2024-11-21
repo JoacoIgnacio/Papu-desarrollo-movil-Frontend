@@ -8,6 +8,9 @@ import { DriverForm } from '../screens/Common/DriverChecklistScreen';
 import { EquipmentForm } from '../screens/Common/EquipmentChecklistScreen';
 import InspectionForm from '../screens/Common/InspectionChecklistScreen';
 import { QuestionnaireHistory } from '../screens/Common/QuestionnaireHistory';
+import Driver from '../screens/HistoryScreens/DriverChecklistHistory';
+import Equipment from '../screens/HistoryScreens/EquipmentChecklistHistory';
+import Inspection from '../screens/HistoryScreens/InspectionChecklistHistory';
 
 export type RootStackParamList = {
   Initial: undefined;
@@ -17,6 +20,9 @@ export type RootStackParamList = {
   Equipment: undefined;
   Inspection: undefined;
   QuestionnaireHistory: undefined;
+  DriverHistory: { id: string,date: string };
+  EquipmentHistory: { id: string,date: string };
+  InspectionHistory: { id: string,date: string };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,6 +39,9 @@ const RootStackNavigation = () => {
           <Stack.Screen name="Driver" component={DriverForm} />
           <Stack.Screen name="Equipment" component={EquipmentForm} />
           <Stack.Screen name="Inspection" component={InspectionForm} />
+          <Stack.Screen name="DriverHistory" component={Driver} />
+          <Stack.Screen name="EquipmentHistory" component={Equipment} />
+          <Stack.Screen name="InspectionHistory" component={Inspection} />
         </Stack.Group>
       </Stack.Navigator>
     </NavigationContainer>
