@@ -9,6 +9,7 @@ import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { getUserId } from '../../services/authStorage';
 import axios from 'axios';
 import { config } from 'dotenv';
+import { getCurrentLocation } from './geolocation';
 
 export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Driver'>) => {
   const [formData, setFormData] = useState({
@@ -140,12 +141,26 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
     if (isAuthenticated) {
       const userId = await getUserId('userId');
       console.log('User ID:', userId);
+    // Obtener ubicación
+    const locationResult = await getCurrentLocation();
+    if (!locationResult.success || !locationResult.coords) {
+      console.log('No se obtuvo ubicación, detener el flujo');
+      return; // Detener el flujo si no se puede obtener la ubicación
+    }
       try {
+        console.log('Ubicación a enviar:', {
+          latitude: locationResult.coords.latitude,
+          longitude: locationResult.coords.longitude,
+        });
         await axios.post(`http://${process.env.IP}:3001/answers`, {
           questionnaireId: "6736bffaa13eade062a1d230",
           questionId: "6736d70b8a664768001bb594",
           userId: userId,
           response: formData.nombre,
+          location: {
+            latitude: locationResult.coords.latitude,
+            longitude: locationResult.coords.longitude,
+          },
         });
 
         await axios.post(`http://${process.env.IP}:3001/answers`, {
@@ -153,6 +168,10 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
           questionId: "6736d7118a664768001bb596",
           userId: userId,
           response: formData.fecha,
+          location: {
+            latitude: locationResult.coords.latitude,
+            longitude: locationResult.coords.longitude,
+          }, // Adjuntar ubicación
         });
 
         await axios.post(`http://${process.env.IP}:3001/answers`, {
@@ -160,6 +179,11 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
           questionId: "6736d7158a664768001bb598",
           userId: userId,
           response: formData.patente,
+          location: {
+            latitude: locationResult.coords.latitude,
+            longitude: locationResult.coords.longitude,
+          },// Adjuntar ubicación
+          
         });
 
         await axios.post(`http://${process.env.IP}:3001/answers`, {
@@ -168,6 +192,10 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
           userId: userId,
           response: formData.horasSueño,
           observations: formData.observaciones.horasSueño,
+          location: {
+            latitude: locationResult.coords.latitude,
+            longitude: locationResult.coords.longitude,
+          }, // Adjuntar ubicación
         });
 
         const imagePromises = formData.archivos.map(async (uri) => {

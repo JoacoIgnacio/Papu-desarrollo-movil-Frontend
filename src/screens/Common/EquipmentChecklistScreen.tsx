@@ -8,6 +8,7 @@ import { styles } from './EquipmentChecklistScreen.styles';
 import { getUserId } from '../../services/authStorage';
 import axios from 'axios';
 import { config } from 'dotenv';
+import { getCurrentLocation } from './geolocation';
 
 export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Equipment'>) => {
   const [formData, setFormData] = useState({
@@ -146,6 +147,9 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
     const isAuthenticated = await handleBiometricAuth();
     if (isAuthenticated) {
       const userId = await getUserId('userId');
+      // Obtener ubicación
+    const locationResult = await getCurrentLocation();
+    if (!locationResult.success) return; // Si no se obtuvo ubicación, detener el flujo
     try {
       const name = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -153,6 +157,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           questionId: "6736d70b8a664768001bb594",
           userId: userId,
           response: formData.nombre,
+          location: locationResult.coords,
         });
       const date = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -160,6 +165,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           questionId: "6736d7118a664768001bb596",
           userId: userId,
           response: formData.fecha,
+          location: locationResult.coords,
         });
       const patente = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -167,6 +173,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           questionId: "6736d7158a664768001bb598",
           userId: userId,
           response: formData.patente,
+          location: locationResult.coords,
         });
       const kilometraje = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -174,6 +181,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           questionId: "6736dfa98a664768001bb5c8",
           userId: userId,
           response: formData.kilometraje,
+          location: locationResult.coords,
         });
       const luces = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -182,6 +190,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           userId: userId,
           response: formData.luces,
           observations: formData.observaciones.luces,
+          location: locationResult.coords,
         });
       const neumaticos = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -190,6 +199,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           userId: userId,
           response: formData.neumaticos,
           observations: formData.observaciones.neumaticos,
+          location: locationResult.coords,
         });
       const parabrisas = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -198,6 +208,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           userId: userId,
           response: formData.parabrisas,
           observations: formData.observaciones.parabrisas,
+          location: locationResult.coords,
         });
       const carroceria = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -206,6 +217,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           userId: userId,
           response: formData.carroceria,
           observations: formData.observaciones.carroceria,
+          location: locationResult.coords,
         });
       const aguaAceite = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -214,6 +226,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           userId: userId,
           response: formData.aguaAceite,
           observations: formData.observaciones.aguaAceite,
+          location: locationResult.coords,
         });
       const documentacion = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -222,6 +235,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           userId: userId,
           response: formData.documentacion,
           observations: formData.observaciones.documentacion,
+          location: locationResult.coords,
         });
       const botiquin = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -230,6 +244,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           userId: userId,
           response: formData.botiquin,
           observations: formData.observaciones.botiquin,
+          location: locationResult.coords,
         });
       const kitDerrame = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -238,6 +253,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           userId: userId,
           response: formData.kitDerrame,
           observations: formData.observaciones.kitDerrame,
+          location: locationResult.coords,
         });
       const kitEmergencia = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -246,6 +262,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           userId: userId,
           response: formData.kitEmergencia,
           observations: formData.observaciones.kitEmergencia,
+          location: locationResult.coords,
         });
       const kitInvierno = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -254,6 +271,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           userId: userId,
           response: formData.kitInvierno,
           observations: formData.observaciones.kitInvierno,
+          location: locationResult.coords,
         });
       const extintor = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -262,6 +280,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           userId: userId,
           response: formData.extintor,
           observations: formData.observaciones.extintor,
+          location: locationResult.coords,
         });
       const volante = await axios.post(`http://${process.env.IP}:3001/answers`, 
         {
@@ -270,6 +289,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           userId: userId,
           response: formData.volante,
           observations: formData.observaciones.volante,
+          location: locationResult.coords,
         });
       const gps = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -278,6 +298,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           userId: userId,
           response: formData.gps,
           observations: formData.observaciones.gps,
+          location: locationResult.coords,
         });
       const rco = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -286,6 +307,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           userId: userId,
           response: formData.rco,
           observations: formData.observaciones.rco,
+          location: locationResult.coords,
         });
       const trabaTuercas = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -294,6 +316,7 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           userId: userId,
           response: formData.trabaTuercas,
           observations: formData.observaciones.trabaTuercas,
+          location: locationResult.coords,
         });
 
         Alert.alert('Enviado', 'El formulario ha sido enviado exitosamente');

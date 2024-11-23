@@ -8,6 +8,7 @@ import { styles } from './InspectionChecklistScreen.styles';
 import { getUserId } from '../../services/authStorage';
 import axios from 'axios';
 import { config } from 'dotenv';
+import { getCurrentLocation } from './geolocation';
 
 // Definir la interfaz con firma de índice global
 interface FormData {
@@ -221,6 +222,10 @@ export const InspectionForm = ({ navigation }: NativeStackScreenProps<RootStackP
     const isAuthenticated = await handleBiometricAuth();
     if (isAuthenticated){
       const userId = await getUserId('userId');
+      // Obtener ubicación
+    const locationResult = await getCurrentLocation();
+    if (!locationResult.success) return; // Si no se obtuvo ubicación, detener el flujo
+
     try {
       const name = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -228,6 +233,7 @@ export const InspectionForm = ({ navigation }: NativeStackScreenProps<RootStackP
           questionId: "6736d70b8a664768001bb594",
           userId: userId,
           response: formData.nombre,
+          location: locationResult.coords,
         });
       const patente = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -235,6 +241,7 @@ export const InspectionForm = ({ navigation }: NativeStackScreenProps<RootStackP
           questionId: "6736d7158a664768001bb598",
           userId: userId,
           response: formData.patente,
+          location: locationResult.coords,
         });
       const kilometraje = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -242,6 +249,7 @@ export const InspectionForm = ({ navigation }: NativeStackScreenProps<RootStackP
           questionId: "6736dfa98a664768001bb5c8",
           userId: userId,
           response: formData.kilometraje,
+          location: locationResult.coords,
         });
     } catch (error) {
       console.error('Error al enviar el formulario:', error);
