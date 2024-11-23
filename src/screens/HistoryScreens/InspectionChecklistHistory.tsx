@@ -32,8 +32,7 @@ interface FormData {
         try {
           const response = await axios.get(`http://${process.env.IP}:3001/answers/${userId}/${idQuestionnarie}?date=${date}`);
           const data = response.data;
-          console.log(data);
-  
+        
           // Mapea los datos recibidos a formData
           const newFormData = {
             nombre: data.find((item: any) => item.questionId.text === 'Nombre')?.response || '',

@@ -61,7 +61,13 @@ export const QuestionnaireHistory = ({ navigation }: NativeStackScreenProps<Root
             onPress={() => handleSelectQuestionnaire(questionnaire.id,questionnaire.date  )}
           >
             <Text style={styles.questionnaireTitle}>{questionnaire.title}</Text>
-            <Text style={styles.questionnaireDate}>{questionnaire.date.split('T')[0]}</Text>
+            <Text style={styles.questionnaireDate}>
+              {
+                questionnaire.date.split('T')[0] + " " + 
+                questionnaire.date.split('T')[1].split(':')[0] + ":" +
+                questionnaire.date.split('T')[1].split(':')[1] 
+            }
+            </Text>
           </TouchableOpacity>
         ))
       ) : (

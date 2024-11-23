@@ -76,6 +76,7 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
       mediaTypes: ImagePicker.MediaTypeOptions.Images, 
       allowsEditing: true,
       quality: 1,
+      base64: true // Incluir base64 en el resultado
     });
 
     if (!result.canceled && result.assets) {
@@ -96,11 +97,13 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
       mediaTypes: ImagePicker.MediaTypeOptions.Images, 
       allowsEditing: true,
       quality: 1,
+      base64: true // Incluir base64 en el resultado
     });
 
     if (!result.canceled && result.assets) {
       const newImages = result.assets.map(asset => asset.uri); // Extraemos los URIs de las imágenes tomadas
       setFormData({ ...formData, archivos: [...formData.archivos, ...newImages] }); // Agregar nuevas imágenes al arreglo
+      console.log('Nuevas imágenes:', newImages);
     }
   };
 
@@ -167,6 +170,27 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
           observations: formData.observaciones.horasSueño,
         });
 
+        const imagePromises = formData.archivos.map(async (uri) => {
+          const response = await fetch(uri);
+          const blob = await response.blob();
+          const base64Image = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+          return base64Image;
+        });
+
+        const base64Images = await Promise.all(imagePromises);
+        
+        await axios.post(`http://${process.env.IP}:3001/answers/upload`, {
+          questionnaireId: "6736bffaa13eade062a1d230",
+          questionId: "6736ddb98a664768001bb5ae",
+          userId: userId,
+          response: 'text',
+          images: base64Images, // Enviar las imágenes en base64
+        });
         
         navigation.navigate('Home');
       } catch (error) {
