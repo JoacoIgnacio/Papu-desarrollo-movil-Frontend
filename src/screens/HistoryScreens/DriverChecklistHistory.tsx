@@ -14,6 +14,7 @@ interface FormData {
     horasSueño: string;
   };
   archivos: string[];
+  location: { latitude: number, longitude: number };
 }
 
 const DriverChecklistScreen = ({ route, navigation }: { route: any, navigation: NavigationProp<any, 'DriverHistory'> }) => {
@@ -29,8 +30,10 @@ const DriverChecklistScreen = ({ route, navigation }: { route: any, navigation: 
     observaciones: {
       horasSueño: ''
     },
-    archivos: []
+    archivos: [],
+    location: { latitude: 0, longitude: 0 }, // Agregar localización al estado inicial
   });
+  
 
   useEffect(() => {
     // Función para obtener los datos del endpoint
@@ -50,7 +53,8 @@ const DriverChecklistScreen = ({ route, navigation }: { route: any, navigation: 
           observaciones: {
             horasSueño: data.find((item: any) => item.questionId.text === '¿Ha dormido menos de 6 hrs en las últimas 24 hrs?')?.observations || ''
           },
-          archivos: [] // Aquí puedes agregar lógica para manejar archivos si es necesario
+          archivos: [], // Aquí puedes agregar lógica para manejar archivos si es necesario
+          location: data.location || { latitude: 0, longitude: 0 },
         };
 
         setFormData(newFormData);
@@ -108,6 +112,14 @@ const DriverChecklistScreen = ({ route, navigation }: { route: any, navigation: 
         ) : (
           <Text>No hay fotos adjuntas</Text>
         )}
+      </View>
+      {/* Nueva sección: Location */}
+      <Text style={styles.sectionTitle}>Localización</Text>
+      <View style={styles.card}>
+        <Text style={styles.label}>Latitud</Text>
+        <Text style={styles.input}>{formData.location.latitude}</Text>
+        <Text style={styles.label}>Longitud</Text>
+        <Text style={styles.input}>{formData.location.longitude}</Text>
       </View>
 
       <Button

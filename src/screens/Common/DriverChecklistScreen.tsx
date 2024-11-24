@@ -9,6 +9,8 @@ import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { getUserId } from '../../services/authStorage';
 import axios from 'axios';
 import { config } from 'dotenv';
+import { getCurrentLocation } from './geolocation';
+
 
 export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Driver'>) => {
   const [formData, setFormData] = useState({
@@ -140,6 +142,12 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
     if (isAuthenticated) {
       const userId = await getUserId('userId');
       console.log('User ID:', userId);
+      // Obtener ubicación
+      const locationResult = await getCurrentLocation();
+      if (!locationResult.success || !locationResult.coords) {
+        console.log('No se obtuvo ubicación, detener el flujo');
+        return; // Detener el flujo si no se puede obtener la ubicación
+      }
       try {
         await axios.post(`http://${process.env.IP}:3001/answers`, {
           questionnaireId: "6736bffaa13eade062a1d230",
@@ -168,6 +176,13 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
           userId: userId,
           response: formData.horasSueño,
           observations: formData.observaciones.horasSueño,
+        });
+        await axios.post(`http://${process.env.IP}:3001/answers/location`, {
+          questionnaireId: "6736bffaa13eade062a1d230",
+          location: {
+            latitude: locationResult.coords.latitude,
+            longitude: locationResult.coords.longitude,
+          },
         });
 
         const imagePromises = formData.archivos.map(async (uri) => {
