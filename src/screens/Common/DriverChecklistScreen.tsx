@@ -39,7 +39,6 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
       presentacionPersonal: ''
     },
     archivos: [] as string[],  // Modificado para almacenar un arreglo de imágenes
-    location: null as { latitude: number; longitude: number } | null, // Para almacenar la ubicación
   });
 
   const handleInputChange = (name: string, value: string) => {
@@ -135,21 +134,69 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
   
       return result.success;
     };
-    
+
   // Enviar formulario con autenticación biométrica y luego enviar los datos al servidor
   const handleSubmit = async () => {
     const isAuthenticated = await handleBiometricAuth();
     if (isAuthenticated) {
       const userId = await getUserId('userId');
       console.log('User ID:', userId);
-
-      // Obtener ubicación
-      const locationResult = await getCurrentLocation();
-      if (!locationResult.success || !locationResult.coords) {
-        console.log('No se obtuvo ubicación, detener el flujo');
-        return; // Detener el flujo si no se puede obtener la ubicación
-      }
+    // Obtener ubicación
+    const locationResult = await getCurrentLocation();
+    if (!locationResult.success || !locationResult.coords) {
+      console.log('No se obtuvo ubicación, detener el flujo');
+      return; // Detener el flujo si no se puede obtener la ubicación
+    }
       try {
+        console.log('Ubicación a enviar:', {
+          latitude: locationResult.coords.latitude,
+          longitude: locationResult.coords.longitude,
+        });
+        await axios.post(`http://${process.env.IP}:3001/answers`, {
+          questionnaireId: "6736bffaa13eade062a1d230",
+          questionId: "6736d70b8a664768001bb594",
+          userId: userId,
+          response: formData.nombre,
+          location: {
+            latitude: locationResult.coords.latitude,
+            longitude: locationResult.coords.longitude,
+          },
+        });
+
+        await axios.post(`http://${process.env.IP}:3001/answers`, {
+          questionnaireId: "6736bffaa13eade062a1d230",
+          questionId: "6736d7118a664768001bb596",
+          userId: userId,
+          response: formData.fecha,
+          location: {
+            latitude: locationResult.coords.latitude,
+            longitude: locationResult.coords.longitude,
+          }, // Adjuntar ubicación
+        });
+
+        await axios.post(`http://${process.env.IP}:3001/answers`, {
+          questionnaireId: "6736bffaa13eade062a1d230",
+          questionId: "6736d7158a664768001bb598",
+          userId: userId,
+          response: formData.patente,
+          location: {
+            latitude: locationResult.coords.latitude,
+            longitude: locationResult.coords.longitude,
+          },// Adjuntar ubicación
+          
+        });
+
+        await axios.post(`http://${process.env.IP}:3001/answers`, {
+          questionnaireId: "6736bffaa13eade062a1d230",
+          questionId: "6736c01ea13eade062a1d232",
+          userId: userId,
+          response: formData.horasSueño,
+          observations: formData.observaciones.horasSueño,
+          location: {
+            latitude: locationResult.coords.latitude,
+            longitude: locationResult.coords.longitude,
+          }, // Adjuntar ubicación
+        });
 
         const imagePromises = formData.archivos.map(async (uri) => {
           const response = await fetch(uri);
@@ -165,27 +212,13 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
 
         const base64Images = await Promise.all(imagePromises);
         
-        await axios.post(`http://${process.env.IP}:3001/answers`, {
-          questionnaireId: "6736bffaa13eade062a1d230",  // Ajustar según sea necesario
+        await axios.post(`http://${process.env.IP}:3001/answers/upload`, {
+          questionnaireId: "6736bffaa13eade062a1d230",
+          questionId: "6736ddb98a664768001bb5ae",
           userId: userId,
-          responses: [
-            { questionId: "6736d70b8a664768001bb594", response: formData.nombre },
-            { questionId: "6736d7118a664768001bb596", response: formData.fecha },
-            { questionId: "6736d7158a664768001bb598", response: formData.patente },
-            {
-              questionId: "6736c01ea13eade062a1d232",
-              response: formData.horasSueño,
-              observations: formData.observaciones.horasSueño,
-            },
-          ],
-          location: {
-            latitude: locationResult.coords.latitude,
-            longitude: locationResult.coords.longitude,
-          },
-          images: base64Images, // Enviar imágenes en base64 junto con la ubicación
+          response: 'text',
+          images: base64Images, // Enviar las imágenes en base64
         });
-    
-        Alert.alert('Éxito', 'Formulario enviado correctamente.');
         
         navigation.navigate('Home');
       } catch (error) {
