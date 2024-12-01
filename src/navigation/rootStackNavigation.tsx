@@ -11,10 +11,13 @@ import { QuestionnaireHistory } from '../screens/Common/QuestionnaireHistory';
 import Driver from '../screens/HistoryScreens/DriverChecklistHistory';
 import Equipment from '../screens/HistoryScreens/EquipmentChecklistHistory';
 import Inspection from '../screens/HistoryScreens/InspectionChecklistHistory';
+import RegisterScreen from '../screens/Auth/RegisterScreen';
+
 
 export type RootStackParamList = {
   Initial: undefined;
   Login: undefined;
+  Register: undefined;
   Home: undefined;
   Driver: undefined;
   Equipment: undefined;
@@ -34,6 +37,7 @@ const RootStackNavigation = () => {
         <Stack.Group screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Initial" component={InitialScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="QuestionnaireHistory" component={QuestionnaireHistory} />
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Driver" component={DriverForm} />
