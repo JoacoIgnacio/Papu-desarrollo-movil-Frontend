@@ -89,6 +89,12 @@ const LoginScreen = ({ navigation}: NativeStackScreenProps<RootStackParamList>) 
         )}
       </Button>
 
+      <Button  
+        title="Registrarse" 
+        onPress={() => navigation.navigate('Register')}
+        buttonStyle={{ ...styles.button, backgroundColor: theme.colors.secondary, marginTop: 10 }}
+      />
+
       <Button
         title="Regresar a la Pantalla Inicial"
         onPress={() => navigation.navigate('Initial')}
