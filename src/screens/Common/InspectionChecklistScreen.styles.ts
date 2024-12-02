@@ -67,4 +67,26 @@ export const styles = StyleSheet.create({
     height: 80,
     textAlignVertical: 'top',
   },
+  image: {
+    width: 300, // Ancho deseado
+    height: 200, // Altura deseada
+    resizeMode: 'contain', // Para ajustar la imagen sin recortarla
+    marginBottom: 10
+  },
+  buttonContainer: {
+    marginTop: 20,
+    alignItems: 'center'
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)'
+  },
+  fullImage: {
+    width: '90%',
+    height: '70%',
+    resizeMode: 'contain'
+  }
+
 });

@@ -8,6 +8,8 @@ import { styles } from './EquipmentChecklistScreen.styles';
 import { getUserId } from '../../services/authStorage';
 import axios from 'axios';
 import { config } from 'dotenv';
+import { getCurrentLocation } from '../../utils/geolocation';
+import { ActivityIndicator } from 'react-native-paper';
 
 export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Equipment'>) => {
   const [formData, setFormData] = useState({
@@ -49,6 +51,8 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
     },
     archivos: [] as string[],
   });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   // Solicitar permisos de la cámara
   const requestCameraPermissions = async () => {
@@ -143,9 +147,16 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     const isAuthenticated = await handleBiometricAuth();
     if (isAuthenticated) {
       const userId = await getUserId('userId');
+      const locationResult = await getCurrentLocation();
+      if (!locationResult.success || !locationResult.coords) {
+        console.log('No se obtuvo ubicación, detener el flujo');
+        setIsLoading(false);
+        return; // Detener el flujo si no se puede obtener la ubicación
+      }
     try {
       const name = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
@@ -296,15 +307,60 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           observations: formData.observaciones.trabaTuercas,
         });
 
+        await axios.post(`http://${process.env.IP}:3001/answers`, {
+          questionnaireId: "6736de612b80aa3d639437b7",
+          questionId: "6736ddc08a664768001bb5b0",
+          userId: userId,
+          response: "Ubicacion",
+          observations: JSON.stringify(
+            { 
+              latitud: locationResult.coords.latitude, 
+              longitud: locationResult.coords.longitude 
+            }
+        ),
+        });
+
+        const imagePromises = formData.archivos.map(async (uri) => {
+          const response = await fetch(uri);
+          const blob = await response.blob();
+          const base64Image = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+          return base64Image;
+        });
+
+        const base64Images = await Promise.all(imagePromises);
+        
+        if(base64Images.length > 0) {
+          await axios.post(`http://${process.env.IP}:3001/answers/upload`, {
+            questionnaireId: "6736de612b80aa3d639437b7",
+            questionId: "6736ddb98a664768001bb5ae",
+            userId: userId,
+            response: 'text',
+            images: base64Images, // Enviar las imágenes en base64
+          });
+        }
+        
+
         Alert.alert('Enviado', 'El formulario ha sido enviado exitosamente');
         navigation.navigate('Home');
       } catch (error) {
         console.error('Error al enviar el formulario:', error);
+      } finally {
+        setIsLoading(false); // Finalizar el estado de carga
       }
     } else {
       Alert.alert('Error', 'La autenticación falló, no se puede enviar el formulario');
+      setIsLoading(false);
     }
-    } 
+  } 
+
+  const isFormComplete = () => {
+    return Object.values(formData).every(value => value !== '');
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -773,14 +829,18 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
         )}
       </View>
 
-
-      <Button
-        title="Enviar"
-        onPress={() => {
-          handleSubmit();
-          navigation.navigate('Home');
-        }}
-      />
+      {isFormComplete() && (
+        <View style={styles.buttonContainer}>
+          {isLoading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <Button
+              title="Enviar"
+              onPress={handleSubmit}
+            />
+          )}
+        </View>
+      )}
     </ScrollView>
   );
 };

@@ -5,11 +5,10 @@ import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import * as ImagePicker from 'expo-image-picker';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { styles } from './DriverChecklistScreen.styles';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { getUserId } from '../../services/authStorage';
 import axios from 'axios';
-import { config } from 'dotenv';
-import { getCurrentLocation } from './geolocation';
+import { getCurrentLocation } from '../../utils/geolocation';
+import { ActivityIndicator } from 'react-native-paper';
 
 
 export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Driver'>) => {
@@ -41,6 +40,8 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
     },
     archivos: [] as string[],  // Modificado para almacenar un arreglo de imágenes
   });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (name: string, value: string) => {
     if (name.includes('observaciones')) {
@@ -138,14 +139,16 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
 
   // Enviar formulario con autenticación biométrica y luego enviar los datos al servidor
   const handleSubmit = async () => {
+    setIsLoading(true);
     const isAuthenticated = await handleBiometricAuth();
     if (isAuthenticated) {
       const userId = await getUserId('userId');
-      console.log('User ID:', userId);
+    
       // Obtener ubicación
       const locationResult = await getCurrentLocation();
       if (!locationResult.success || !locationResult.coords) {
         console.log('No se obtuvo ubicación, detener el flujo');
+        setIsLoading(false);
         return; // Detener el flujo si no se puede obtener la ubicación
       }
       try {
@@ -177,12 +180,17 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
           response: formData.horasSueño,
           observations: formData.observaciones.horasSueño,
         });
-        await axios.post(`http://${process.env.IP}:3001/answers/location`, {
+        await axios.post(`http://${process.env.IP}:3001/answers`, {
           questionnaireId: "6736bffaa13eade062a1d230",
-          location: {
-            latitude: locationResult.coords.latitude,
-            longitude: locationResult.coords.longitude,
-          },
+          questionId: "6736ddc08a664768001bb5b0",
+          userId: userId,
+          response: "Ubicacion",
+          observations: JSON.stringify(
+            { 
+              latitud: locationResult.coords.latitude, 
+              longitud: locationResult.coords.longitude 
+            }
+        ),
         });
 
         const imagePromises = formData.archivos.map(async (uri) => {
@@ -199,23 +207,37 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
 
         const base64Images = await Promise.all(imagePromises);
         
-        await axios.post(`http://${process.env.IP}:3001/answers/upload`, {
-          questionnaireId: "6736bffaa13eade062a1d230",
-          questionId: "6736ddb98a664768001bb5ae",
-          userId: userId,
-          response: 'text',
-          images: base64Images, // Enviar las imágenes en base64
-        });
+        if(base64Images.length > 0) {
+          await axios.post(`http://${process.env.IP}:3001/answers/upload`, {
+            questionnaireId: "6736bffaa13eade062a1d230",
+            questionId: "6736ddb98a664768001bb5ae",
+            userId: userId,
+            response: 'text',
+            images: base64Images, // Enviar las imágenes en base64
+          });
+        }
         
         navigation.navigate('Home');
       } catch (error) {
         console.error('Error al enviar el formulario:', error);
         Alert.alert('Error', 'No se pudo enviar el formulario. Inténtalo de nuevo.');
+      } finally {
+        setIsLoading(false); // Finalizar el estado de carga
       }
     } else {
+      setIsLoading(false);
       Alert.alert('Error', 'La autenticación falló, no se puede enviar el formulario');
     }
   };
+
+  const isFormComplete = () => {
+    return (
+      formData.nombre !== '' && 
+      formData.fecha !== '' && 
+      formData.patente !== '' && 
+      formData.horasSueño !== ''
+    );
+  }
   
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -312,13 +334,18 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
         )}
       </View>
 
-      <Button
-        title="Enviar"
-        onPress={() => {
-          handleSubmit();
-          navigation.navigate('Home');
-        }}
-      />
+      {isFormComplete() && (
+        <View style={styles.buttonContainer}>
+          {isLoading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <Button
+              title="Enviar"
+              onPress={handleSubmit}
+            />
+          )}
+        </View>
+      )}
     </ScrollView>
   );
 };

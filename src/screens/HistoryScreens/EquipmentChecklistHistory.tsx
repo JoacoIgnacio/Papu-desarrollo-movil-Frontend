@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Image, Button, TextInput, TouchableOpacity } from 'react-native';
+import { ScrollView, View, Text, Image, Button, TextInput, TouchableOpacity,Modal } from 'react-native';
 import axios from 'axios';
 import { NavigationProp, RouteProp } from '@react-navigation/native';
 import { styles } from '../Common/EquipmentChecklistScreen.styles';
 import { getUserId } from '../../services/authStorage';
+
 
 interface FormData {
   nombre: string;
@@ -43,6 +44,8 @@ interface FormData {
     trabaTuercas: string;
   };
   archivos: string[];
+  location: { latitud: number, longitud: number };
+  direccion: string;
 }
 
 interface EquipmentChecklistScreenProps {
@@ -55,10 +58,10 @@ const EquipmentChecklistScreen = ({ route, navigation }: { route: any, navigatio
     const date = route.params.date;
 
     const [formData, setFormData] = useState<FormData>({
-    nombre: '',
-    fecha: '',
-    patente: '',
-    kilometraje: '',
+    nombre: 'Cargando resultados...',
+    fecha: 'Cargando resultados...',
+    patente: 'Cargando resultados...',
+    kilometraje: 'Cargando resultados...',
     luces: '',
     neumaticos: '',
     parabrisas: '',
@@ -91,18 +94,50 @@ const EquipmentChecklistScreen = ({ route, navigation }: { route: any, navigatio
       rco: '',
       trabaTuercas: '',
     },
-    archivos: []
+    archivos: [],
+    location: { latitud: 0, longitud: 0 },
+    direccion: 'Cargando dirección...',
   });
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const handleImagePress = (image: string) => {
+    setSelectedImage(`data:image/jpeg;base64,${image}`);
+    setModalVisible(true);
+  };
+
+  const getAddressFromCoordinates = async (lat: number, lng: number) => {
+    const apiKey = process.env.apiKey; // Tu clave API
+    console.log(apiKey);
+    const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}%2C${lng}&key=${apiKey}&pretty=1`;
+    console.log(url);
+    try {
+      const response = await axios.get(url);
+      if (response.data && response.data.results.length > 0) {
+        return response.data.results[0].formatted; // Dirección formateada
+      } else {
+        return 'Dirección no encontrada';
+      }
+    } catch (error) {
+      console.error('Error obteniendo la dirección:', error);
+      return 'Error al obtener la dirección';
+    }
+  };
 
   useEffect(() => {
     // Función para obtener los datos del endpoint
     const fetchData = async () => {
       const userId = await getUserId('userId');
       try {
+        
         const response = await axios.get(`http://${process.env.IP}:3001/answers/${userId}/${idQuestionnarie}?date=${date}`);
-        const data = response.data;
        
+        const data = response.data;
 
+        console.log(`http://${process.env.IP}:3001/answers/${userId}/${idQuestionnarie}?date=${date}`);  
+       
+        
         // Mapea los datos recibidos a formData
         const newFormData = {
           nombre: data.find((item: any) => item.questionId.text === 'Nombre')?.response || '',
@@ -141,8 +176,13 @@ const EquipmentChecklistScreen = ({ route, navigation }: { route: any, navigatio
               rco: data.find((item: any) => item.questionId.text === 'Se encuentra conectado a la aplicación RCO')?.observations || '',
               trabaTuercas: data.find((item: any) => item.questionId.text === 'Su camión cuenta con traba tuercas')?.observations || '',
             },
-          archivos: [] // Aquí puedes agregar lógica para manejar archivos si es necesario
+          archivos: data.find((item: any) => item.questionId.text === 'Imagenes')?.images || '', // Aquí puedes agregar lógica para manejar archivos si es necesario
+          location: data.find((item: any) => item.questionId.text === 'Ubicacion')?.observations || { latitud: 0, longitud: 0 },
+          direccion: 'Cargando dirección...', // Valor temporal
         };
+
+        newFormData.location = JSON.parse(newFormData.location);
+        newFormData.direccion = await getAddressFromCoordinates(newFormData.location.latitud, newFormData.location.longitud);
 
         setFormData(newFormData);
       } catch (error) {
@@ -152,10 +192,7 @@ const EquipmentChecklistScreen = ({ route, navigation }: { route: any, navigatio
 
     fetchData();
   }, [idQuestionnarie]);
-
-    function handleRemoveImage(uri: string): void {
-        throw new Error('Function not implemented.');
-    }
+  const [loading, setLoading] = useState(false);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -307,17 +344,40 @@ const EquipmentChecklistScreen = ({ route, navigation }: { route: any, navigatio
         <Text style={styles.textarea}>{formData.observaciones.trabaTuercas}</Text>
       </View>
 
-      {/* Mostrar las imágenes seleccionadas o tomadas */}
-      {formData.archivos.length > 0 && (
-        <View>
-          {formData.archivos.map((uri, index) => (
-            <View key={index} style={{ marginBottom: 10 }}>
-              <Image source={{ uri }} style={{ width: 100, height: 100 }} />
-              <Button title="Eliminar Foto" onPress={() => handleRemoveImage(uri)} />
-            </View>
-          ))}
+      {/* Nueva sección: Mostrar imágenes */}
+      <Text style={styles.sectionTitle}>Imágenes adjuntas</Text>
+      <View style={styles.card}>
+        {formData.archivos.length > 0 ? (
+          formData.archivos.map((base64Image, index) => (
+            <TouchableOpacity key={index} onPress={() => handleImagePress(base64Image)}>
+            <Image
+              key={index}
+              source={{ uri:`data:image/jpeg;base64,${base64Image}`}}
+              style={styles.image}
+            />
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text>No hay imágenes adjuntas</Text>
+        )}
+      </View>
+
+      <Text style={styles.sectionTitle}>Dirección</Text>
+      <View style={styles.card}>
+        <Text style={styles.label}>Dirección</Text>
+        <Text style={styles.input}>{formData.direccion}</Text>
+      </View>
+
+      {/* Modal para mostrar imagen */}
+      <Modal
+        visible={modalVisible}
+        onDismiss={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          {selectedImage && <Image source={{ uri: selectedImage }} style={styles.fullImage} />}
+          <Button title="Cerrar" onPress={() => setModalVisible(false)} />
         </View>
-      )}
+      </Modal>
 
       <Button
         title="Volver"
@@ -330,3 +390,4 @@ const EquipmentChecklistScreen = ({ route, navigation }: { route: any, navigatio
 };
 
 export default EquipmentChecklistScreen;
+

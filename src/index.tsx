@@ -23,10 +23,11 @@ const App = () => {
   return (
     <SafeAreaProvider>
       <ThemeProvider theme={theme}>
-        <RootStackNavigation />
+        <RootStackNavigation />     
       </ThemeProvider>
     </SafeAreaProvider>
   );
 };
+
 
 export default App;
