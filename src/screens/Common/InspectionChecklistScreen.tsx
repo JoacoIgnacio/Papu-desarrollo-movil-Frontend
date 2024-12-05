@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Button, Image, Alert,StyleSheet, ActivityIndicator } from 'react-native';
 import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import * as ImagePicker from 'expo-image-picker';
@@ -9,6 +9,7 @@ import { getUserId } from '../../services/authStorage';
 import axios from 'axios';
 import { getCurrentLocation } from '../../utils/geolocation';
 import { Snackbar } from 'react-native-paper';
+import { Picker } from '@react-native-picker/picker';
 
 // Definir la interfaz con firma de índice global
 interface FormData {
@@ -70,6 +71,8 @@ interface FormData {
 }
 
 export const InspectionForm = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Inspection'>) => {
+  const [machines, setMachines] = useState<string[]>([]); // Patentes de las máquinas
+  const [loadingMachines, setLoadingMachines] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     nombre: '',
     patente: '',
@@ -219,6 +222,25 @@ export const InspectionForm = ({ navigation }: NativeStackScreenProps<RootStackP
 
     return result.success;
   };
+    // Función para obtener las máquinas vinculadas al usuario
+    const fetchMachines = async () => {
+      setLoadingMachines(true);
+      try {
+        const userId = await getUserId('userId'); // Obtén el ID del usuario
+        const response = await axios.get(`http://${process.env.IP}:3000/user-machine/user/${userId}`);
+        const machinePatents = response.data.map((machine: any) => machine.machine.name); // Extrae las patentes
+        setMachines(machinePatents);
+      } catch (error) {
+        console.error('Error fetching machines:', error);
+        Alert.alert('Error', 'No se pudieron cargar las patentes.');
+      } finally {
+        setLoadingMachines(false);
+      }
+    };
+      // Llama a fetchMachines al montar el componente
+      useEffect(() => {
+        fetchMachines(); // Llamada automática al montar
+      }, []);
 
   const handleSubmit = async () => {
     setIsLoading(true);
@@ -329,12 +351,17 @@ export const InspectionForm = ({ navigation }: NativeStackScreenProps<RootStackP
       {/* Tarjeta 2: Patente */}
       <View style={styles.card}>
         <Text style={styles.label}>Patente</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Patente del vehículo"
-          value={formData.patente}
-          onChangeText={(text) => handleInputChange('patente', text)}
-        />
+        <Picker
+             selectedValue={formData.patente}
+             onValueChange={(value) => handleInputChange('patente', value)}
+             style={styles.picker}
+             itemStyle={{ height: 50, fontSize: 16 }} // Ajusta altura y tamaño de fuente de los ítems
+          >
+            <Picker.Item label="Seleccione una patente" value="" />
+            {machines.map((patente, index) => (
+              <Picker.Item key={index} label={patente} value={patente} />
+            ))}
+          </Picker>
       </View>
 
       {/* Tarjeta 3: Kilometraje */}

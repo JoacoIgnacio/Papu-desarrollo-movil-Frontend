@@ -279,7 +279,7 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
         />
       </View>
 
-      {/* Tarjeta 2: Fecha */}
+      {/* Tarjeta 2: Fecha 
       <View style={styles.card}>
         <Text style={styles.label}>Fecha</Text>
         <TextInput
@@ -289,7 +289,7 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
           onChangeText={(text) => handleInputChange('fecha', text)}
         />
       </View>
-
+*/}
       {/* Tarjeta 3: Patente */}
       <View style={styles.card}>
         <Text style={styles.label}>Patente</Text>
