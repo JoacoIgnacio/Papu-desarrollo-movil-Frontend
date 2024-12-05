@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Button, Image, Alert, StyleSheet } from 'react-native';
 import { RootStackParamList } from '../../navigation/rootStackNavigation';
 import * as ImagePicker from 'expo-image-picker';
@@ -9,9 +9,12 @@ import { getUserId } from '../../services/authStorage';
 import axios from 'axios';
 import { getCurrentLocation } from '../../utils/geolocation';
 import { ActivityIndicator } from 'react-native-paper';
+import { Picker } from '@react-native-picker/picker';
 
 
 export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParamList, 'Driver'>) => {
+  const [machines, setMachines] = useState<string[]>([]); // Patentes de las máquinas
+  const [loadingMachines, setLoadingMachines] = useState(false);
   const [formData, setFormData] = useState({
     nombre: '',
     fecha: '',
@@ -36,9 +39,11 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
       ropa: '',
       checkListEquipos: '',
       rco: '',
-      presentacionPersonal: ''
+      presentacionPersonal: '',
     },
+     
     archivos: [] as string[],  // Modificado para almacenar un arreglo de imágenes
+    
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -229,7 +234,27 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
       Alert.alert('Error', 'La autenticación falló, no se puede enviar el formulario');
     }
   };
-
+  
+  // Función para obtener las máquinas vinculadas al usuario
+  const fetchMachines = async () => {
+    setLoadingMachines(true);
+    try {
+      const userId = await getUserId('userId'); // Obtén el ID del usuario
+      const response = await axios.get(`http://${process.env.IP}:3000/user-machine/user/${userId}`);
+      const machinePatents = response.data.map((machine: any) => machine.machine.name); // Extrae las patentes
+      setMachines(machinePatents);
+    } catch (error) {
+      console.error('Error fetching machines:', error);
+      Alert.alert('Error', 'No se pudieron cargar las patentes.');
+    } finally {
+      setLoadingMachines(false);
+    }
+  };
+    // Llama a fetchMachines al montar el componente
+    useEffect(() => {
+      fetchMachines(); // Llamada automática al montar
+    }, []);
+  
   const isFormComplete = () => {
     return (
       formData.nombre !== '' && 
@@ -268,12 +293,18 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
       {/* Tarjeta 3: Patente */}
       <View style={styles.card}>
         <Text style={styles.label}>Patente</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Patente del vehículo"
-          value={formData.patente}
-          onChangeText={(text) => handleInputChange('patente', text)}
-        />
+        <Picker
+             selectedValue={formData.patente}
+             onValueChange={(value) => handleInputChange('patente', value)}
+             style={styles.picker}
+             itemStyle={{ height: 50, fontSize: 16 }} // Ajusta altura y tamaño de fuente de los ítems
+          >
+            <Picker.Item label="Seleccione una patente" value="" />
+            {machines.map((patente, index) => (
+              <Picker.Item key={index} label={patente} value={patente} />
+            ))}
+          </Picker>
+
       </View>
 
       {/* Tarjeta 4: Fatiga y Somnolencia */}
@@ -351,3 +382,7 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
 };
 
 export default DriverForm;
+function setLoadingMachines(arg0: boolean) {
+  throw new Error('Function not implemented.');
+}
+

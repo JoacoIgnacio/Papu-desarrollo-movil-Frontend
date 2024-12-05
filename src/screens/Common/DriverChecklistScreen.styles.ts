@@ -92,5 +92,13 @@ export const styles = StyleSheet.create({
     width: '90%',
     height: '70%',
     resizeMode: 'contain'
-  }
+  },
+  picker: {
+    height: 50, // Altura del Picker
+    width: '100%', // Ancho completo
+    backgroundColor: '#fff', // Fondo blanco para consistencia
+    borderWidth: 1, // Borde para delimitar
+    borderColor: '#ccc', // Color del borde
+    borderRadius: 5, // Bordes redondeados
+  },
 });
