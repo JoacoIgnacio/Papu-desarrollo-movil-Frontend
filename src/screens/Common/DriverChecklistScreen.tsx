@@ -17,7 +17,6 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
   const [loadingMachines, setLoadingMachines] = useState(false);
   const [formData, setFormData] = useState({
     nombre: '',
-    fecha: '',
     patente: '',
     horasSueño: '',
     medicamento: '',
@@ -164,12 +163,6 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
           response: formData.nombre,
         });
 
-        await axios.post(`http://${process.env.IP}:3001/answers`, {
-          questionnaireId: "6736bffaa13eade062a1d230",
-          questionId: "6736d7118a664768001bb596",
-          userId: userId,
-          response: formData.fecha,
-        });
 
         await axios.post(`http://${process.env.IP}:3001/answers`, {
           questionnaireId: "6736bffaa13eade062a1d230",
@@ -258,7 +251,6 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
   const isFormComplete = () => {
     return (
       formData.nombre !== '' && 
-      formData.fecha !== '' && 
       formData.patente !== '' && 
       formData.horasSueño !== ''
     );
@@ -279,17 +271,7 @@ export const DriverForm = ({ navigation }: NativeStackScreenProps<RootStackParam
         />
       </View>
 
-      {/* Tarjeta 2: Fecha 
-      <View style={styles.card}>
-        <Text style={styles.label}>Fecha</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Fecha (YYYY-MM-DD)"
-          value={formData.fecha}
-          onChangeText={(text) => handleInputChange('fecha', text)}
-        />
-      </View>
-*/}
+      
       {/* Tarjeta 3: Patente */}
       <View style={styles.card}>
         <Text style={styles.label}>Patente</Text>

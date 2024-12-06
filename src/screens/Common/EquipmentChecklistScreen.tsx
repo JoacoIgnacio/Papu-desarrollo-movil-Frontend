@@ -17,7 +17,6 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
   const [loadingMachines, setLoadingMachines] = useState(false);
   const [formData, setFormData] = useState({
     nombre: '',
-    fecha: '',
     patente: '',
     kilometraje: '',
     luces: '',
@@ -167,13 +166,6 @@ export const EquipmentForm = ({ navigation }: NativeStackScreenProps<RootStackPa
           questionId: "6736d70b8a664768001bb594",
           userId: userId,
           response: formData.nombre,
-        });
-      const date = await axios.post(`http://${process.env.IP}:3001/answers`,
-        {
-          questionnaireId: "6736de612b80aa3d639437b7",
-          questionId: "6736d7118a664768001bb596",
-          userId: userId,
-          response: formData.fecha,
         });
       const patente = await axios.post(`http://${process.env.IP}:3001/answers`,
         {
